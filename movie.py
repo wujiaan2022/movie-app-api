@@ -7,30 +7,30 @@ from datetime import datetime
 def display_menu():
     print("\n" + "*" * 7 + " My Movies Database " + "*" * 7)
     menu = {
-        '0': "Exit",
-        '1': "List movies",
-        '2': "Add movie",
-        '3': "Delete movie",
-        '4': "Update movie",
-        '5': "Stats",
-        '6': "Random movie",
-        '7': "Search movie",
-        '8': "Movies sorted by rating",
-        '9': "Movies sorted by year",
-        '10': "Filter movies"
+        '1': "Exit",
+        '2': "List movies",
+        '3': "Add movie",
+        '4': "Delete movie",
+        '5': "Update movie",
+        '6': "Stats",
+        '7': "Random movie",
+        '8': "Search movie",
+        '9': "Movies sorted by rating",
+        '10': "Movies sorted by year",
+        '11': "Filter movies"
     }
     for key, value in menu.items():
         print(f"{key}. {value}")
 
 
-def choose_from_menu():
+def get_valid_int(dic):
     while True:
         try:
-            menu_choice = int(input("Enter choice (0-10): ").strip())
-            if 0 <= menu_choice <= 10:
-                return menu_choice
+            choice = int(input(f"Enter choice (1-{len(dic)}): ").strip())
+            if 1 <= choice <= len(dic):
+                return choice
             else:
-                print("Input error! Please enter a number between 0-10.")
+                print(f"Input error! Please enter a number between 1-{len(dic)}.")
         except ValueError:
             print("Input error! Please enter an integer.")
         except Exception as e:
@@ -42,17 +42,46 @@ def exit_panel():
     sys.exit()
 
 
-# Function to list movies
-def list_movies(movies):
-    print(f"{len(movies)} movies in total")
-    for name, infos in movies.items():
-        print(f"{name} ({infos["Year of release"]}): {infos["Rating"]}")
+def index_movie(movies):
+    try:
+        index_movies = {}
+        for i in range(1, len(movies)):
+            for name, infos in movies.items():
+                year = infos["Year of release"]
+                rating = infos["Rating"]
+                index_movies[str(i)] = {name: {"Year of release": year, "Rating": rating}}
+        return index_movies
+    except Exception as e:
+        print(f"Unexpected error occurred: {e}")
+
+
+# Function to display a list of movies
+def display_index_movies(index_movies):
+    try:
+        print(f"{len(index_movies)} movies in total")
+
+        for i, movie in index_movies:
+            name = movie.key
+            year = movie[name]["Release of year"]
+            rating = movie[name]["Rating"]
+            print(f"{i}. {name} ({year}): {rating}")
+
+    except Exception as e:
+        print(f"Unexpected error occurred: {e}")
+
+
+def display_list_movie(movies):
+    try:
+        index_movies = index_movie(movies)
+        display_index_movies(index_movies)
+    except Exception as e:
+        print(f"An error occurred in display_list_movie: {e}")
 
 
 def get_valid_movie_name():
     while True:
         try:
-            movie_name = input("Please enter the movie name: ").strip().title()
+            movie_name = input("Please enter the movie name you want to add: ").strip().title()
             if not movie_name:
                 print("Movie name cannot be empty. Please try again.")
             elif not movie_name.replace(" ", "").isalnum():
@@ -120,6 +149,7 @@ def add_movie(movies):
     while True:
         try:
             movie_name = get_valid_movie_name()
+
             # check name existence by checking close matches in the movie list
             close_matches = difflib.get_close_matches(movie_name, movies.keys(), n=len(movies), cutoff=0.8)
 
@@ -140,89 +170,177 @@ def add_movie(movies):
                     movies[movie_name] = {"Year of release": year, "Rating": rating}
                     print(f"Movie {movie_name} with release of year {year} and rating {rating}\n"
                           f"has been added successfully.")
-
+            else:
+                year, rating = get_valid_movie_infos()
+                movies[movie_name] = {"Year of release": year, "Rating": rating}
+                print(f"Movie {movie_name} with release of year {year} and rating {rating}\n"
+                      f"has been added successfully.")
         except KeyError as ke:
             print(f"Key error: {ke}")
         except Exception as e:
             print(f"Unexpected error occurred: {e}")
 
 
-# Function to delete a movie
-def delete_movie(movies):
+def get_valid_partial_name():
+    while True:
+        try:
+            partial_name = input("Please enter part of the movie name: ").strip()
+            if not partial_name:
+                print("Movie name cannot be empty. Please try again.")
+            elif not partial_name.replace(" ", "").isalnum():
+                print("Movie name should only contain alphanumeric characters and spaces. Please try again.")
+            else:
+                return partial_name
+        except Exception as e:
+            print(f"Unexpected error occurred: {e}")
+
+
+def display_partial_matches(partial_name, movies):
     try:
-        movie_name = get_valid_movie_name()
-        if movie_name in movies:
-            del movies[movie_name]
-            print(f"Movie {movie_name} has been deleted successfully!")
-        else:
-            print("Sorry, the movie you entered does not exist.")
+        partial_matches = {name: infos for name, infos in movies.item() if partial_name.lower() in name.lower()}
+        index_movies = index_movie(partial_matches)
+        display_index_movies(index_movies)
+    except KeyError as ve:
+        print(f"Key error: {ve}")
     except Exception as e:
         print(f"Unexpected error occurred: {e}")
 
 
+# Function to delete a movie
+def delete_movie(movies):
+    while True:
+        try:
+            partial_name = get_valid_partial_name()
+            partial_matches = {name: infos for name, infos in movies.item() if partial_name.lower() in name.lower()}
+            if partial_matches:
+                index_movies = index_movie(partial_matches)
+                display_index_movies(index_movies)
+                print("Enter the number of the movie to delete.")
+                i = str(get_valid_int(index_movies))
+                movie = index_movies[i]
+                movie_name = list(movie.keys())[0]
+                del movies[movie_name]
+                print(f"Movie {movie_name} has been deleted successfully!")
+            else:
+                print("Cannot find any match movie. Please try again.")
+
+            answer = input("Press any key to delete another movie, 'n' to exit: ").strip().lower()
+            if answer == "n":
+                break
+
+        except Exception as e:
+            print(f"Unexpected error occurred: {e}")
+
+
 # Function to update a movie rating
 def update_movie_infos(movies):
-    movie_name = get_valid_movie_name()
-    if movie_name in movies:
-        year, rating = get_valid_movie_infos()
-        movies[movie_name] = {"Year of release": year, "Rating": rating}
-        print(f"Infos for movie {movie_name} has been updated successfully!")
-    else:
-        print("Sorry, the movie you entered does not exist.")
+    while True:
+        try:
+            partial_name = get_valid_partial_name()
+            partial_matches = {name: infos for name, infos in movies.item() if partial_name.lower() in name.lower()}
+            if partial_matches:
+                index_movies = index_movie(partial_matches)
+                display_index_movies(index_movies)
+                print("Enter the number of the movie to update.")
+                i = str(get_valid_int(index_movies))
+                movie = index_movies[i]
+                movie_name = list(movie.keys())[0]
+                year, rating = get_valid_movie_infos()
+                movies[movie_name] = {"Year of release": year, "Rating": rating}
+                print(f"Movie {movie_name} with release of year {year} and rating {rating}\n"
+                      f"has been updated successfully.")
+
+            else:
+                print("Cannot find any match movie. Please try again.")
+
+            answer = input("Press any key to update another movie, 'n' to exit: " ).strip().lower()
+            if answer == "n":
+                break
+
+        except Exception as e:
+            print(f"Unexpected error occurred: {e}")
+
 
 # Function to calculate average rating
 def average(movies):
-    total_sum = sum(movies.values())
-    average_rating = total_sum / len(movies)
-    print(f"Average rating: {average_rating:.2f}")
+    try:
+        total_sum = sum(movies.values())
+        average_rating = total_sum / len(movies)
+        print(f"Average rating: {average_rating:.2f}")
+    except Exception as e:
+        print(f"Unexpected error occurred: {e}")
 
 
 # Function to calculate median rating
 def median(movies):
-    ratings = sorted(movies.values())
-    mid = len(ratings) // 2
-    median_rating = (ratings[mid - 1] + ratings[mid]) / 2 if len(ratings) % 2 == 0 else ratings[mid]
-    print(f"Median rating: {median_rating:.2f}")
+    try:
+        ratings = sorted(movies.values())
+        mid = len(ratings) // 2
+        median_rating = (ratings[mid - 1] + ratings[mid]) / 2 if len(ratings) % 2 == 0 else ratings[mid]
+        print(f"Median rating: {median_rating:.2f}")
+    except Exception as e:
+        print(f"Unexpected error occurred: {e}")
+
+
 # Function to find the best and worst rated movies
-
-
 def best_worst(movies):
-    sorted_movies = sorted(movies.items(), key=lambda item: item[1])
-    print(f"The best movie is {sorted_movies[-1][0]} with a rating of {sorted_movies[-1][1]}")
-    print(f"The worst movie is {sorted_movies[0][0]} with a rating of {sorted_movies[0][1]}")
+    try:
+        sorted_movies = sorted(movies.items(), key=lambda item: item[1])
+        print(f"The best movie is {sorted_movies[-1][0]} with a rating of {sorted_movies[-1][1]}")
+        print(f"The worst movie is {sorted_movies[0][0]} with a rating of {sorted_movies[0][1]}")
+    except Exception as e:
+        print(f"Unexpected error occurred: {e}")
 
 
 def show_status(movies):
-    average(movies)
-    median(movies)
-    best_worst(movies)
+    try:
+        average(movies)
+        median(movies)
+        best_worst(movies)
+    except Exception as e:
+        print(f"An error occurred in show_status: {e}")
 
 
 # Function to pick a random movie
 def random_choice(movies):
-    random_movie = random.choice(list(movies.items()))
-    print(f"The random movie is {random_movie[0]} with a rating of {random_movie[1]}")
+    try:
+        random_movie = random.choice(list(movies.items()))
+        print(f"The random movie is {random_movie[0]} with a rating of {random_movie[1]}")
+    except Exception as e:
+        print(f"An error occurred in random_choice: {e}")
+
+
 # Function to search for movies by partial name
-
-
 def search_movie(movies):
-    query = input("Please enter part of the movie name you are searching for: ")
-    matches = {name: rating for name, rating in movies.items() if query.lower() in name.lower()}
-    if matches:
-        print("Found the following matches:")
-        for name, rating in matches.items():
-            print(f"{name}: {rating}")
-    else:
-        print("No match found.")
+    while True:
+        try:
+            partial_name = get_valid_partial_name()
+            partial_matches = {name: infos for name, infos in movies.item() if partial_name.lower() in name.lower()}
+            if partial_matches:
+                index_movies = index_movie(partial_matches)
+                display_index_movies(index_movies)
+
+            else:
+                print("No match found.")
+
+            answer = input("Press any key to search another movie, 'n' to exit: ").strip().lower()
+            if answer == "n":
+                break
+
+        except Exception as e:
+            print(f"An error occurred in search_movie: {e}")
 
 
 # Function to display movies sorted by rating
 def sort_rating(movies):
-    sorted_movies = sorted(movies.items(), key=lambda item: item[1], reverse=True)
-    print("Movies sorted by rating (highest to lowest):")
-    for name, rating in sorted_movies:
-        print(f"{name}: {rating}")
-# Function to display the menu and get user choice
+    try:
+        sorted_movies = sorted(movies.items(), key=lambda item: item[1], reverse=True)
+        print("Movies sorted by rating (highest to lowest):")
+        for name, rating in sorted_movies:
+            print(f"{name}: {rating}")
+    except Exception as e:
+        print(f"An error occurred in sort_rating: {e}")
+
 
 # Main function to drive the program
 def main():
