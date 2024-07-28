@@ -2,34 +2,9 @@ import sys
 import random
 import difflib
 from datetime import datetime
+
 from user_input import get_valid_movie_name, choose_add_or_not, get_valid_movie_infos, get_valid_partial_name, get_valid_int
 from utils import assign_sequence_to_movies, display_sequence_movies, average, median, best_worst
-
-
-# display the main menu
-def display_menu():
-    print("\n" + "*" * 7 + " My Movies Database " + "*" * 7)
-    menu = {
-        '1': "Exit the movie panel",
-        '2': "Show list of the movies",
-        '3': "Add movies",
-        '4': "Delete movies",
-        '5': "Update movies",
-        '6': "Show stats (average and median rating, best and worst rating)",
-        '7': "Get a random movie",
-        '8': "Search movies",
-        '9': "Movies sorted by rating",
-        '10': "Movies sorted by year",
-        '11': "Filter movies"
-    }
-    for key, value in menu.items():
-        print(f"{key}. {value}")
-
-
-# function to exit the movie panel
-def exit_panel():
-    print("Bye!")
-    sys.exit()
 
 
 # function to display the movie list from database
@@ -39,6 +14,23 @@ def display_list_movie(movies):
         display_sequence_movies(sequence_movies)
     except Exception as e:
         print(f"An error occurred in display_list_movie: {e}")
+
+
+def close_matches_dict(partial, movies):
+
+    movies_lower = []
+    for key in movies.keys():
+        movies_lower.append(key.lower())
+
+    close_matches = difflib.get_close_matches(partial.lower(), movies_lower, n=len(movies), cutoff=0.5)
+
+    close_dict = {}
+    for match in close_matches:
+        for name, infos in movies.items():
+            if match == name.lower():
+                close_dict[name] = infos
+    return close_dict
+
 
 
 # Function to add a movie
@@ -69,38 +61,92 @@ def add_movie(movies):
             else:
                 year, rating = get_valid_movie_infos()
                 movies[movie_name] = {"Year of release": year, "Rating": rating}
-                print(f"Movie {movie_name} with release of year {year} and rating {rating}\n"
+                print(f"Movie {movie_name} with year of release {year} and rating {rating}\n"
                       f"has been added successfully.")
+
+            answer = input("Press any key to add another movie, 'e' to exit: ").strip().lower()
+            if answer == "e":
+                break
+
         except KeyError as ke:
             print(f"Key error in add_movie: {ke}")
         except Exception as e:
             print(f"An error occurred in add_movie: {e}")
 
 
-# Function to delete a movie
 def delete_movie(movies):
     while True:
         try:
             partial_name = get_valid_partial_name()
-            partial_matches = {name: infos for name, infos in movies.item() if partial_name.lower() in name.lower()}
+            partial_matches = close_matches_dict(partial_name, movies)
+
             if partial_matches:
+
                 sequence_movies = assign_sequence_to_movies(partial_matches)
                 display_sequence_movies(sequence_movies)
                 print("Enter the number of the movie to delete.")
                 i = str(get_valid_int(sequence_movies))
-                movie = sequence_movies[i]
-                movie_name = list(movie.keys())[0]
-                del movies[movie_name]
-                print(f"Movie {movie_name} has been deleted successfully!")
-            else:
-                print("Cannot find any match movie. Please try again.")
 
-            answer = input("Press any key to delete another movie, 'n' to exit: ").strip().lower()
-            if answer == "n":
+                # Debug print to check the chosen index
+                print(f"Chosen index: {i}")
+
+                if i in sequence_movies:
+                    movie = sequence_movies[i]
+                    movie_name = list(movie.keys())[0]
+                    del movies[movie_name]
+                    print(f"Movie {movie_name} has been deleted successfully!")
+                else:
+                    print("Invalid movie number. Please try again.")
+            else:
+                print("Cannot find any matching movie. Please try again.")
+
+            answer = input("Press any key to delete another movie, 'e' to exit: ").strip().lower()
+            if answer == "e":
                 break
 
+        except ValueError as ve:
+            print(f"Value error occurred in delete_movie: {ve}")
+        except IndexError as ie:
+            print(f"Index error occurred in delete_movie: {ie}")
+        except KeyError as ke:
+            print(f"Key error occurred in delete_movie: {ke}")
         except Exception as e:
             print(f"An error occurred in delete_movie: {e}")
+
+
+# Function to delete a movie
+# def delete_movie(movies):
+#     while True:
+#         try:
+#             partial_name = get_valid_partial_name()
+#
+#             partial_matches = {name: infos for name, infos in movies.items()
+#                                if partial_name.lower() in name.lower().replace(" ", "")}
+#
+#             if partial_matches:
+#                 sequence_movies = assign_sequence_to_movies(partial_matches)
+#                 display_sequence_movies(sequence_movies)
+#                 print("Enter the number of the movie to delete.")
+#                 i = str(get_valid_int(sequence_movies))
+#                 movie = sequence_movies[i]
+#                 movie_name = list(movie.keys())[0]
+#                 del movies[movie_name]
+#                 print(f"Movie {movie_name} has been deleted successfully!")
+#             else:
+#                 print("Cannot find any match movie. Please try again.")
+#
+#             answer = input("Press any key to delete another movie, 'e' to exit: ").strip().lower()
+#             if answer == "e":
+#                 break
+#
+#         except ValueError as ve:
+#             print(f"Value error occurred in delete_movie: {ve}")
+#         except IndexError as ie:
+#             print(f"Index error occurred in delete_movie: {ie}")
+#         except KeyError as ke:
+#             print(f"Key error occurred in delete_movie: {ke}")
+#         except Exception as e:
+#             print(f"An error occurred in delete_movie: {e}")
 
 
 # Function to update a movie rating
@@ -108,7 +154,7 @@ def update_movie(movies):
     while True:
         try:
             partial_name = get_valid_partial_name()
-            partial_matches = {name: infos for name, infos in movies.item() if partial_name.lower() in name.lower()}
+            partial_matches = {name: infos for name, infos in movies.items() if partial_name.lower() in name.lower()}
             if partial_matches:
                 sequence_movies = assign_sequence_to_movies(partial_matches)
                 display_sequence_movies(sequence_movies)
@@ -124,8 +170,8 @@ def update_movie(movies):
             else:
                 print("Cannot find any match movie. Please try again.")
 
-            answer = input("Press any key to update another movie, 'n' to exit: " ).strip().lower()
-            if answer == "n":
+            answer = input("Press any key to update another movie, 'e' to exit: " ).strip().lower()
+            if answer == "e":
                 break
 
         except Exception as e:
@@ -212,6 +258,4 @@ def sort_year(movies):
         print(f"Key error occurred in sort_year: {ke}")
     except Exception as e:
         print(f"An error occurred in sort_year: {e}")
-
-
 

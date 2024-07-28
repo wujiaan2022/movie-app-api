@@ -3,12 +3,15 @@ import random
 import difflib
 from datetime import datetime
 
+from common import display_menu, exit_panel
+
 
 # prompt and validate user input for the sequence number of a movie that user want to work on
 def get_valid_int(dic):
     while True:
         try:
             choice = int(input(f"Enter choice (1-{len(dic)}): ").strip())
+
             if 1 <= choice <= len(dic):
                 return choice
             else:
@@ -16,7 +19,7 @@ def get_valid_int(dic):
         except ValueError:
             print("Input error! Please enter an integer.")
         except Exception as e:
-            print(f"Unexpected error occurred: {e}")
+            print(f"An error occurred in get_valid_int: {e}")
 
 
 # prompt and validate the user input for the movie name before adding
@@ -57,7 +60,7 @@ def choose_add_or_not():
 def get_valid_movie_infos():
     while True:
         try:
-            movie_year = int(input("Please enter the year of release:" ))
+            movie_year = int(input("Please enter the year of release: " ))
 
             if movie_year < 1888 or movie_year > datetime.now().year:
                 print("Input error! Movie year cannot be earlier than 1888 or later than the current year.")
@@ -90,7 +93,7 @@ def get_valid_movie_infos():
 def get_valid_partial_name():
     while True:
         try:
-            partial_name = input("Please enter part of the movie name: ").strip()
+            partial_name = input("Please enter part of the movie name: ").strip().title()
             if not partial_name:
                 print("Movie name cannot be empty. Please try again.")
             elif not partial_name.replace(" ", "").isalnum():
