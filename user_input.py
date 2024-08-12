@@ -71,7 +71,7 @@ def get_valid_movie_infos():
                     movie_rating = float(input("Please enter the rating (0-10): "))
 
                     if movie_rating < 0 or movie_rating > 10:
-                        print("Input error! you must enter a number between 0-10")
+                        print("Input error! You must enter a number between 0-10.")
                         continue
 
                     break
@@ -102,3 +102,54 @@ def get_valid_partial_name():
                 return partial_name
         except Exception as e:
             print(f"An error occurred in get_valid_partial_name: {e}")
+
+
+def get_valid_filter_rating():
+    while True:
+        try:
+            filter_rating = input("\nEnter minimum rating (leave blank for no minimum rating) or 'q' for quit: ")
+
+            if filter_rating.lower() == "q":
+                return filter_rating
+
+            if filter_rating == "":
+                return None
+
+            else:
+                filter_rating = float(filter_rating)
+                if 0 <= filter_rating <= 10:
+                    rounded_rating = round(filter_rating, 1)
+                    return rounded_rating
+
+                else:
+                    print("Input error! You must enter a number between 0-10.")
+
+        except ValueError:
+            print("Input error! Please enter a valid number for minimus rating.")
+        except Exception as e:
+            print(f"An error occurred in get_valid_filter_rating: {e}")
+
+
+def get_valid_filter_year():
+    while True:
+        try:
+            filter_year = input("Enter a year number or leave it empty, or 'q' for quit: ")
+
+            if filter_year.lower() == "q":
+                return filter_year
+
+            if filter_year == "":
+                return None
+
+            filter_year = int(filter_year)
+            if 1888 <= filter_year <= datetime.now().year:
+                return filter_year
+
+            else:
+                print("Input error! Movie year cannot be earlier than 1888 or later than the current year.")
+
+        except ValueError:
+            print("Input error! Please enter a valid number for minimus rating.")
+        except Exception as e:
+            print(f"An error occurred in get_valid_filter_rating: {e}")
+

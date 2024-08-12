@@ -23,7 +23,7 @@ def assign_sequence_to_movies(movies):
 # Function to display a list of movies with a sequence number for better readability and user experience
 def display_sequence_movies(sequence_movies):
     try:
-        print(f"{len(sequence_movies)} movies in total\n")
+        print(f"\n{len(sequence_movies)} movies in total\n")
 
         for i, movie in sequence_movies.items():
             name = list(movie.keys())[0]

@@ -3,7 +3,8 @@ import random
 import difflib
 from datetime import datetime
 
-from user_input import get_valid_movie_name, choose_add_or_not, get_valid_movie_infos, get_valid_partial_name, get_valid_int
+from user_input import (get_valid_movie_name, choose_add_or_not, get_valid_movie_infos, get_valid_partial_name,
+                        get_valid_int, get_valid_filter_rating, get_valid_filter_year)
 from utils import assign_sequence_to_movies, display_sequence_movies, average, median, best_worst
 
 
@@ -30,7 +31,6 @@ def close_matches_dict(partial, movies):
             if match == name.lower():
                 close_dict[name] = infos
     return close_dict
-
 
 
 # Function to add a movie
@@ -258,4 +258,62 @@ def sort_year(movies):
         print(f"Key error occurred in sort_year: {ke}")
     except Exception as e:
         print(f"An error occurred in sort_year: {e}")
+
+
+def filter_movie(movies):
+    while True:
+        try:
+            filter_rating = get_valid_filter_rating()
+
+            if str(filter_rating).lower() == "q":
+                break
+
+            if filter_rating is None:
+                rating_matches = movies
+
+            else:
+                rating_matches = {movie: infos for movie, infos in movies.items()
+                                  if float(infos["Rating"]) >= float(filter_rating) }
+
+            print("\nEnter start year (leave blank for no start year).")
+            filter_start_year = get_valid_filter_year()
+
+            if str(filter_start_year).lower() == "q":
+                break
+
+            if filter_start_year is None:
+                start_year_matches = rating_matches
+            else:
+                start_year_matches = {movie: infos for movie, infos in rating_matches.items()
+                                      if int(infos["Year of release"]) >= int(filter_start_year)}
+
+            print("\nEnter end year (leave blank for no end year).")
+            filter_end_year = get_valid_filter_year()
+
+            if str(filter_end_year).lower() == "q":
+                break
+
+            if filter_end_year is None:
+                end_year_matches = start_year_matches
+            else:
+                end_year_matches = {movie: infos for movie, infos in start_year_matches.items()
+                                    if int(infos["Year of release"]) <= int(filter_end_year)}
+
+            sequence_movies = assign_sequence_to_movies(end_year_matches)
+            display_sequence_movies(sequence_movies)
+
+            answer = input("\nPress any key to filter other movies, or 'q' to quit: ").strip().lower()
+            if answer == "q":
+                break
+
+        except ValueError as ve:
+            print(f"Type error occurred in filter_movie: {ve}.")
+        except TypeError as te:
+            print(f"Type error occurred in filter_movie: {te}.")
+            break
+        except KeyError as ke:
+            print(f"Key error occurred in filter_movie: {ke}")
+        except Exception as e:
+            print(f"An error occurred in filter_movie: {e}")
+
 
