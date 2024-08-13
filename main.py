@@ -7,8 +7,8 @@ from common import display_menu, exit_panel
 from user_input import (get_valid_movie_name, choose_add_or_not, get_valid_movie_infos,
                         get_valid_partial_name, get_valid_int)
 from utils import assign_sequence_to_movies, display_sequence_movies, average, median, best_worst
-from operations import (display_list_movie, add_movie, delete_movie,
-                        update_movie, show_status, get_random_movie, search_movie, sort_rating, sort_year, filter_movie)
+from operations import (display_list_movie, add_movie, delete_movie, update_movie, show_status, get_random_movie,
+                        search_movie, sort_rating, sort_year, filter_movie)
 
 
 # Main function to drive the program
@@ -26,25 +26,27 @@ def main():
         "Fight Club": {"Year of release": "1999", "Rating": "8.8"}
     }
     menu = {
-        '1': exit_panel,
-        '2': display_list_movie,
-        '3': add_movie,
-        '4': delete_movie,
-        '5': update_movie,
-        '6': show_status,
-        '7': get_random_movie,
-        '8': search_movie,
-        '9': sort_rating,
-        '10': sort_year,
-        '11': filter_movie
+        '0': exit_panel,
+        '1': display_list_movie,
+        '2': add_movie,
+        '3': delete_movie,
+        '4': update_movie,
+        '5': show_status,
+        '6': get_random_movie,
+        '7': search_movie,
+        '8': sort_rating,
+        '9': sort_year,
+        '10': filter_movie
     }
 
     while True:
         display_menu()
         print()
-        num_str = str(get_valid_int(menu))
-        if num_str == "1":
+        num_str = str(get_valid_int(menu, include_exit=True))
+
+        if num_str == "0":
             menu[num_str]()
+            break
         else:
             menu[num_str](movies)
 

@@ -82,3 +82,20 @@ def best_worst(movies):
         print(f"The worst movie is {sorted_movies[0][0]} with a rating of {sorted_movies[0][1]}")
     except Exception as e:
         print(f"An error occurred in best_worst: {e}")
+
+
+def close_matches_dict(partial, movies):
+
+    movies_lower = []
+    for key in movies.keys():
+        movies_lower.append(key.lower())
+
+    close_matches = difflib.get_close_matches(partial.lower(), movies_lower, n=len(movies), cutoff=0.4)
+
+    close_dict = {}
+    for match in close_matches:
+        for name, infos in movies.items():
+            if match == name.lower():
+                close_dict[name] = infos
+    return close_dict
+

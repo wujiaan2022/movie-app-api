@@ -7,15 +7,39 @@ from common import display_menu, exit_panel
 
 
 # prompt and validate user input for the sequence number of a movie that user want to work on
-def get_valid_int(dic):
+# def get_valid_int(dic, include_exit=False):
+#     while True:
+#         try:
+#             if include_exit:
+#                 choice = int(input(f"Enter choice (1-{len(dic)-1}), or '0' to exit: ").strip())
+#             else:
+#                 choice = int(input(f"Enter choice (1-{len(dic)}): ").strip())
+#
+#             if include_exit and choice == 0:
+#                 return 0
+#
+#             elif 1 <= choice <= len(dic):
+#                 return choice
+#             else:
+#                 print(f"Input error! Please enter a number between 1-{len(dic)}.")
+#         except ValueError:
+#             print("Input error! Please enter an integer.")
+#         except Exception as e:
+#             print(f"An error occurred in get_valid_int: {e}")
+
+
+def get_valid_int(dic, include_exit=False):
     while True:
         try:
-            choice = int(input(f"Enter choice (1-{len(dic)}): ").strip())
+            if include_exit:
+                choice = int(input(f"Enter choice (1-{len(dic)-1}), or '0' to exit: ").strip())
+            else:
+                choice = int(input(f"Enter choice (1-{len(dic)}, or '0' to exit): ").strip())
 
-            if 1 <= choice <= len(dic):
+            if 0 <= choice <= len(dic):
                 return choice
             else:
-                print(f"Input error! Please enter a number between 1-{len(dic)}.")
+                print(f"Input error! Please enter a number between 1-{len(dic)}, or '0' to exit.")
         except ValueError:
             print("Input error! Please enter an integer.")
         except Exception as e:
@@ -26,7 +50,9 @@ def get_valid_int(dic):
 def get_valid_movie_name():
     while True:
         try:
-            movie_name = input("Please enter the movie name you want to add: ").strip().title()
+            movie_name = input("Please enter the movie name you want to add(or 'q' for quit): ").strip().title()
+            if movie_name.lower() == "q":
+                return "q"
             if not movie_name:
                 print("Movie name cannot be empty. Please try again.")
             elif not movie_name.replace(" ", "").isalnum():
@@ -60,16 +86,24 @@ def choose_add_or_not():
 def get_valid_movie_infos():
     while True:
         try:
-            movie_year = int(input("Please enter the year of release: " ))
+            movie_year = input("Please enter the year of release(or 'q' for quit): ")
 
+            if movie_year.lower() == "q":
+                return "q"
+
+            movie_year = int(movie_year)
             if movie_year < 1888 or movie_year > datetime.now().year:
                 print("Input error! Movie year cannot be earlier than 1888 or later than the current year.")
                 continue
 
             while True:
                 try:
-                    movie_rating = float(input("Please enter the rating (0-10): "))
+                    movie_rating = input("Please enter the rating (0-10), or 'q' for quit: ")
 
+                    if movie_rating.lower() == "q":
+                        return "q"
+
+                    movie_rating = float(movie_rating)
                     if movie_rating < 0 or movie_rating > 10:
                         print("Input error! You must enter a number between 0-10.")
                         continue
@@ -93,7 +127,11 @@ def get_valid_movie_infos():
 def get_valid_partial_name():
     while True:
         try:
-            partial_name = input("Please enter part of the movie name: ").strip().title()
+            partial_name = input("Please enter part of the movie name(or 'q' for quit): ").strip().title()
+
+            if partial_name.lower() == "q":
+                return "q"
+
             if not partial_name:
                 print("Movie name cannot be empty. Please try again.")
             elif not partial_name.replace(" ", "").isalnum():
