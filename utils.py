@@ -4,6 +4,8 @@ import difflib
 from datetime import datetime
 import user_input
 
+from movie_storage import storage_get_movies, storage_add_movie, storage_delete_movie, storage_update_movie
+
 
 # assign each movie to a sequence number for better readability and user experience
 def assign_sequence_to_movies(movies):
@@ -54,9 +56,15 @@ def display_partial_matches(partial_name, movies):
 
 
 # Function to calculate average rating
-def average(movies):
+def average():
+    movies = storage_get_movies()
     try:
-        total_sum = sum(movies.values())
+        list_rating = []
+        for infos in movies.values():
+            rating = float(infos["Rating"])
+            list_rating.append(rating)
+
+        total_sum = sum(list_rating)
         average_rating = total_sum / len(movies)
         print(f"Average rating: {average_rating:.2f}")
     except Exception as e:
@@ -64,22 +72,33 @@ def average(movies):
 
 
 # Function to calculate median rating
-def median(movies):
+def median():
+    movies = storage_get_movies()
     try:
-        ratings = sorted(movies.values())
-        mid = len(ratings) // 2
-        median_rating = (ratings[mid - 1] + ratings[mid]) / 2 if len(ratings) % 2 == 0 else ratings[mid]
+        list_ratings = []
+        for infos in movies.values():
+            rating = float(infos["Rating"])
+            list_ratings.append(rating)
+
+        sort_ratings = sorted(list_ratings)
+        mid = len(sort_ratings) // 2
+
+        if len(sort_ratings)%2 == 0:
+            median_rating = (sort_ratings[mid - 1] + sort_ratings[mid]) / 2
+        else:
+            median_rating = sort_ratings[mid]
         print(f"Median rating: {median_rating:.2f}")
     except Exception as e:
         print(f"An error occurred in median: {e}")
 
 
 # Function to find the best and worst rated movies
-def best_worst(movies):
+def best_worst():
+    movies = storage_get_movies()
     try:
-        sorted_movies = sorted(movies.items(), key=lambda item: item[1])
-        print(f"The best movie is {sorted_movies[-1][0]} with a rating of {sorted_movies[-1][1]}")
-        print(f"The worst movie is {sorted_movies[0][0]} with a rating of {sorted_movies[0][1]}")
+        sorted_movies = sorted(movies.items(), key=lambda item: float(item[1]["Rating"]))
+        print(f"The best movie is {sorted_movies[-1][0]} with a rating of {sorted_movies[-1][1]["Rating"]}")
+        print(f"The worst movie is {sorted_movies[0][0]} with a rating of {sorted_movies[0][1]["Rating"]}")
     except Exception as e:
         print(f"An error occurred in best_worst: {e}")
 

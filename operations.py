@@ -7,9 +7,12 @@ from user_input import (get_valid_movie_name, choose_add_or_not, get_valid_movie
                         get_valid_int, get_valid_filter_rating, get_valid_filter_year)
 from utils import assign_sequence_to_movies, display_sequence_movies, average, median, best_worst, close_matches_dict
 
+from movie_storage import storage_get_movies, storage_add_movie, storage_delete_movie, storage_update_movie
+
 
 # function to display the movie list from database
-def display_list_movie(movies):
+def display_list_movie():
+    movies = storage_get_movies()
     try:
         sequence_movies = assign_sequence_to_movies(movies)
         display_sequence_movies(sequence_movies)
@@ -18,7 +21,10 @@ def display_list_movie(movies):
 
 
 # Function to add a movie
-def add_movie(movies):
+def add_movie():
+
+    movies = storage_get_movies()
+
     while True:
         try:
             movie_name = get_valid_movie_name()
@@ -49,7 +55,7 @@ def add_movie(movies):
                 if str(year).lower() == "q" or str(rating).lower() == "q":
                     break
                 else:
-                    movies[movie_name] = {"Year of release": year, "Rating": rating}
+                    storage_add_movie(movie_name, year, rating)
                     print(f"Movie {movie_name} with year of release {year} and rating {rating}\n"
                           f"has been added successfully.")
 
@@ -63,7 +69,8 @@ def add_movie(movies):
             print(f"An error occurred in add_movie: {e}")
 
 
-def delete_movie(movies):
+def delete_movie():
+    movies = storage_get_movies()
     while True:
         try:
             partial_name = get_valid_partial_name()
@@ -89,7 +96,7 @@ def delete_movie(movies):
                     if answer == "q":
                         break
                     else:
-                        del movies[movie_name]
+                        storage_delete_movie(movie_name)
                         print(f"Movie {movie_name} has been deleted successfully!")
 
                     answer = input("Press any key to delete another movie, or 'q' for quit: ").strip().lower()
@@ -112,7 +119,8 @@ def delete_movie(movies):
 
 
 # Function to update a movie rating
-def update_movie(movies):
+def update_movie():
+    movies = storage_get_movies()
     while True:
         try:
             partial_name = get_valid_partial_name()
@@ -137,7 +145,7 @@ def update_movie(movies):
                 if str(year).lower() == "q" or str(rating).lower() == "q":
                     break
 
-                movies[movie_name] = {"Year of release": year, "Rating": rating}
+                storage_update_movie(movie_name, year, rating)
                 print(f"Movie {movie_name} with release of year {year} and rating {rating}\n"
                       f"has been updated successfully.")
 
@@ -152,17 +160,19 @@ def update_movie(movies):
             print(f"An error occurred in update_movie_infos: {e}")
 
 
-def show_status(movies):
+def show_status():
+
     try:
-        average(movies)
-        median(movies)
-        best_worst(movies)
+        average()
+        median()
+        best_worst()
     except Exception as e:
         print(f"An error occurred in show_status: {e}")
 
 
 # Function to pick a random movie
-def get_random_movie(movies):
+def get_random_movie():
+    movies = storage_get_movies()
     while True:
         try:
             random_movie = random.choice(list(movies.items()))
@@ -177,7 +187,8 @@ def get_random_movie(movies):
 
 
 # Function to search for movies by partial name
-def search_movie(movies):
+def search_movie():
+    movies = storage_get_movies()
     while True:
         try:
             partial_name = get_valid_partial_name()
@@ -185,7 +196,7 @@ def search_movie(movies):
             if partial_name.lower() == "q":
                 break
 
-            partial_matches = {name: infos for name, infos in movies.item() if partial_name.lower() in name.lower()}
+            partial_matches = {name: infos for name, infos in movies.items() if partial_name.lower() in name.lower()}
             if partial_matches:
                 sequence_movies = assign_sequence_to_movies(partial_matches)
                 display_sequence_movies(sequence_movies)
@@ -202,7 +213,8 @@ def search_movie(movies):
 
 
 # Function to display movies sorted by rating
-def sort_rating(movies):
+def sort_rating():
+    movies = storage_get_movies()
     try:
         sorted_movies = sorted(movies.items(), key=lambda item: float(item[1]["Rating"]), reverse=True)
         print("Movies sorted by rating (highest to lowest):")
@@ -220,7 +232,8 @@ def sort_rating(movies):
         print(f"An error occurred in sort_rating: {e}")
 
 
-def sort_year(movies):
+def sort_year():
+    movies = storage_get_movies()
     try:
         sorted_movies = sorted(movies.items(), key=lambda item: float(item[1]["Year of release"]), reverse=True)
         print("Movies sorted by year of release (highest to lowest):")
@@ -238,7 +251,8 @@ def sort_year(movies):
         print(f"An error occurred in sort_year: {e}")
 
 
-def filter_movie(movies):
+def filter_movie():
+    movies = storage_get_movies()
     while True:
         try:
             filter_rating = get_valid_filter_rating()

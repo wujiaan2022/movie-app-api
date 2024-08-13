@@ -13,18 +13,7 @@ from operations import (display_list_movie, add_movie, delete_movie, update_movi
 
 # Main function to drive the program
 def main():
-    movies = {
-        "In the Name of the Father": {"Year of release": "1993", "Rating": "8.1"},
-        "Titanic": {"Year of release": "1993", "Rating": "8.1"},
-        "The Shawshank Redemption": {"Year of release": "1994", "Rating": "9.3"},
-        "The Godfather": {"Year of release": "1972", "Rating": "9.2"},
-        "The Dark Knight": {"Year of release": "2008", "Rating": "9.0"},
-        "Schindler's List": {"Year of release": "1993", "Rating": "8.1"},
-        "Forrest Gump": {"Year of release": "1994", "Rating": "8.8"},
-        "Pulp Fiction": {"Year of release": "1994", "Rating": "8.9"},
-        "The Matrix": {"Year of release": "1999", "Rating": "1.0"},
-        "Fight Club": {"Year of release": "1999", "Rating": "8.8"}
-    }
+
     menu = {
         '0': exit_panel,
         '1': display_list_movie,
@@ -48,7 +37,7 @@ def main():
             menu[num_str]()
             break
         else:
-            menu[num_str](movies)
+            menu[num_str]()
 
 
 if __name__ == "__main__":

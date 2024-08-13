@@ -1,0 +1,46 @@
+{
+    "In the Name of the Father": {
+        "Year of release": "1993",
+        "Rating": "8.1"
+    },
+    "Titanic": {
+        "Year of release": "1993",
+        "Rating": "8.1"
+    },
+    "The Shawshank Redemption": {
+        "Year of release": "1994",
+        "Rating": "9.3"
+    },
+    "The Godfather": {
+        "Year of release": "1972",
+        "Rating": "9.2"
+    },
+    "The Dark Knight": {
+        "Year of release": "2008",
+        "Rating": "9.0"
+    },
+    "Schindler's List": {
+        "Year of release": "1993",
+        "Rating": "8.1"
+    },
+    "Forrest Gump": {
+        "Year of release": "1994",
+        "Rating": "8.8"
+    },
+    "Pulp Fiction": {
+        "Year of release": "1994",
+        "Rating": "8.9"
+    },
+    "The Matrix": {
+        "Year of release": "1999",
+        "Rating": "1.0"
+    },
+    "Fight Club": {
+        "Year of release": "1999",
+        "Rating": "8.8"
+    },
+    "Abc": {
+        "Year of release": "2023",
+        "Rating": 9.0
+    }
+}
