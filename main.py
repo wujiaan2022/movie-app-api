@@ -8,7 +8,7 @@ from user_input import (get_valid_movie_name, choose_add_or_not, get_valid_movie
                         get_valid_partial_name, get_valid_int)
 from utils import assign_sequence_to_movies, display_sequence_movies, average, median, best_worst
 from operations import (display_list_movie, add_movie, delete_movie, update_movie, show_status, get_random_movie,
-                        search_movie, sort_rating, sort_year, filter_movie)
+                        search_movie, sort_rating, sort_year, filter_movie, generate_website)
 
 
 # Main function to drive the program
@@ -25,7 +25,8 @@ def main():
         '7': search_movie,
         '8': sort_rating,
         '9': sort_year,
-        '10': filter_movie
+        '10': filter_movie,
+        '11': generate_website
     }
 
     while True:

@@ -9,6 +9,8 @@ from utils import assign_sequence_to_movies, display_sequence_movies, average, m
 
 from movie_storage import storage_get_movies, storage_add_movie, storage_delete_movie, storage_update_movie
 
+from web_generate_from_api import generate_html
+
 
 # function to display the movie list from database
 def display_list_movie():
@@ -32,7 +34,7 @@ def add_movie():
                 break
 
             # check name existence by checking close matches in the movie list
-            close_matches = difflib.get_close_matches(movie_name, movies.keys(), n=len(movies), cutoff=0.8)
+            close_matches = difflib.get_close_matches(movie_name, movies.keys(), n=len(movies), cutoff=0.7)
 
             if close_matches:
                 print(f"There are {len(close_matches)} close matches to the move name you entered:")
@@ -45,19 +47,19 @@ def add_movie():
                     break
                 elif answer == "n":
                     continue
+
                 elif answer == "a":
-                    year, rating = get_valid_movie_infos()
-                    movies[movie_name] = {"Year of release": year, "Rating": rating}
-                    print(f"Movie {movie_name} with release of year {year} and rating {rating}\n"
-                          f"has been added successfully.")
-            else:
-                year, rating = get_valid_movie_infos()
-                if str(year).lower() == "q" or str(rating).lower() == "q":
-                    break
-                else:
-                    storage_add_movie(movie_name, year, rating)
-                    print(f"Movie {movie_name} with year of release {year} and rating {rating}\n"
-                          f"has been added successfully.")
+
+                    result = get_valid_movie_infos()
+
+                    if result[0] == "q":
+                        break
+
+                    else:
+                        year, rating = result
+                        movies[movie_name] = {"Year of release": year, "Rating": rating}
+                        print(f"Movie {movie_name} with release of year {year} and rating {rating}\n"
+                              f"has been added successfully.")
 
             answer = input("Press any key to add another movie, 'q' for quit: ").strip().lower()
             if answer == "q":
@@ -140,14 +142,16 @@ def update_movie():
 
                 movie = sequence_movies[i]
                 movie_name = list(movie.keys())[0]
-                year, rating = get_valid_movie_infos()
 
-                if str(year).lower() == "q" or str(rating).lower() == "q":
+                result = get_valid_movie_infos()
+                if result[0] == "q":
                     break
+                else:
+                    year, rating = result
 
-                storage_update_movie(movie_name, year, rating)
-                print(f"Movie {movie_name} with release of year {year} and rating {rating}\n"
-                      f"has been updated successfully.")
+                    storage_update_movie(movie_name, year, rating)
+                    print(f"Movie {movie_name} with release of year {year} and rating {rating}\n"
+                          f"has been updated successfully.")
 
             else:
                 print("Cannot find any match movie. Please try again.")
@@ -157,7 +161,7 @@ def update_movie():
                 break
 
         except Exception as e:
-            print(f"An error occurred in update_movie_infos: {e}")
+            print(f"An error occurred in update_movie: {e}")
 
 
 def show_status():
@@ -309,3 +313,25 @@ def filter_movie():
             print(f"An error occurred in filter_movie: {e}")
 
 
+# def count_movies_by_year():
+#
+#     movies = storage_get_movies()
+#
+#     # prompt the user to enter the year of release
+#     year = input("Please enter the year of release: ")
+#
+#     # create a dict of movies of the given year
+#     movies_year = {name: infos for name, infos in movies.items() if infos["Year of release"] == year}
+#
+#     # count the movies
+#     num = len(movies_year)
+#
+#     return num
+#
+#
+# print(count_movies_by_year())
+
+
+def generate_website():
+    print("Generating website...")
+    generate_html()  # Call the function that generates the website

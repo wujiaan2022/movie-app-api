@@ -15,7 +15,8 @@ def display_menu():
         '7': "Search movies",
         '8': "Movies sorted by rating",
         '9': "Movies sorted by year",
-        '10': "Filter movies"
+        '10': "Filter movies",
+        '11': "Generate Website"
     }
     for key, value in menu.items():
         print(f"{key}. {value}")

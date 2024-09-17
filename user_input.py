@@ -28,18 +28,35 @@ from common import display_menu, exit_panel
 #             print(f"An error occurred in get_valid_int: {e}")
 
 
+# def get_valid_int(dic, include_exit=False):
+#     while True:
+#         try:
+#             if include_exit:
+#                 choice = int(input(f"Enter choice (1-{len(dic)-1}), or '0' to exit: ").strip())
+#             else:
+#                 choice = int(input(f"Enter choice (1-{len(dic)}, or '0' to exit): ").strip())
+#
+#             if 0 <= choice <= len(dic):
+#                 return choice
+#             else:
+#                 print(f"Input error! Please enter a number between 1-{len(dic)}, or '0' to exit.")
+#         except ValueError:
+#             print("Input error! Please enter an integer.")
+#         except Exception as e:
+#             print(f"An error occurred in get_valid_int: {e}")
+
+
 def get_valid_int(dic, include_exit=False):
     while True:
         try:
-            if include_exit:
-                choice = int(input(f"Enter choice (1-{len(dic)-1}), or '0' to exit: ").strip())
-            else:
-                choice = int(input(f"Enter choice (1-{len(dic)}, or '0' to exit): ").strip())
+            upper_limit = len(dic)-1 if include_exit else len(dic)
 
-            if 0 <= choice <= len(dic):
+            choice = int(input(f"Enter choice (1-{upper_limit}), or '0' to exit: ").strip())
+
+            if 0 <= choice <= upper_limit:
                 return choice
             else:
-                print(f"Input error! Please enter a number between 1-{len(dic)}, or '0' to exit.")
+                print(f"Input error! Please enter a number between 1-{upper_limit}, or '0' to exit.")
         except ValueError:
             print("Input error! Please enter an integer.")
         except Exception as e:
@@ -89,7 +106,7 @@ def get_valid_movie_infos():
             movie_year = input("Please enter the year of release(or 'q' for quit): ")
 
             if movie_year.lower() == "q":
-                return "q"
+                return "q", None
 
             movie_year = int(movie_year)
             if movie_year < 1888 or movie_year > datetime.now().year:
@@ -101,7 +118,7 @@ def get_valid_movie_infos():
                     movie_rating = input("Please enter the rating (0-10), or 'q' for quit: ")
 
                     if movie_rating.lower() == "q":
-                        return "q"
+                        return "q", None
 
                     movie_rating = float(movie_rating)
                     if movie_rating < 0 or movie_rating > 10:

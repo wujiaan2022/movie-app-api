@@ -103,18 +103,31 @@ def best_worst():
         print(f"An error occurred in best_worst: {e}")
 
 
+# def close_matches_dict(partial, movies):
+#
+#     movies_lower = []
+#     for key in movies.keys():
+#         movies_lower.append(key.lower())
+#
+#     close_matches = difflib.get_close_matches(partial.lower(), movies_lower, n=len(movies), cutoff=0.6)
+#
+#     close_dict = {}
+#     for match in close_matches:
+#         for name, infos in movies.items():
+#             if match == name.lower():
+#                 close_dict[name] = infos
+#
+#     return close_dict
+
+
 def close_matches_dict(partial, movies):
 
-    movies_lower = []
-    for key in movies.keys():
-        movies_lower.append(key.lower())
+    # for key in movies: This loops through all the keys (movie titles) in the movies dictionary.
+    movies_lower = {key.lower(): key for key in movies}
 
-    close_matches = difflib.get_close_matches(partial.lower(), movies_lower, n=len(movies), cutoff=0.4)
+    close_matches = difflib.get_close_matches(partial.lower(), movies_lower, n=len(movies), cutoff=0.6)
 
-    close_dict = {}
-    for match in close_matches:
-        for name, infos in movies.items():
-            if match == name.lower():
-                close_dict[name] = infos
-    return close_dict
+    closed_dict = {movies_lower[match]: movies[movies_lower[match]] for match in close_matches}
+
+    return closed_dict
 
