@@ -38,5 +38,13 @@
     "Fight Club": {
         "Year of release": "1999",
         "Rating": "8.8"
+    },
+    "Abc": {
+        "Year of release": "2024",
+        "Rating": 10.0
+    },
+    "Tian": {
+        "Year of release": "2024",
+        "Rating": 5.0
     }
 }

@@ -58,8 +58,18 @@ def add_movie():
                     else:
                         year, rating = result
                         movies[movie_name] = {"Year of release": year, "Rating": rating}
+                        storage_add_movie(movie_name, year, rating)
                         print(f"Movie {movie_name} with release of year {year} and rating {rating}\n"
                               f"has been added successfully.")
+
+            else:
+                year, rating = get_valid_movie_infos()
+                if str(year).lower() == "q" or str(rating).lower() == "q":
+                    break
+                else:
+                    storage_add_movie(movie_name, year, rating)
+                    print(f"Movie {movie_name} with year of release {year} and rating {rating}\n"
+                          f"has been added successfully.")
 
             answer = input("Press any key to add another movie, 'q' for quit: ").strip().lower()
             if answer == "q":
