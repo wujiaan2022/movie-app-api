@@ -3,8 +3,8 @@ import json
 
 def storage_get_movies(filename="data.json"):
     try:
-        with open(filename, "r") as json_file:
-            movies = json.load(json_file)
+        with open(filename, "r") as file:
+            movies = json.load(file)
 
     except FileNotFoundError:
         movies = {}
@@ -17,8 +17,8 @@ def storage_get_movies(filename="data.json"):
 
 def storage_save_movies(movies, filename="data.json"):
     try:
-        with open(filename, "w") as json_file:
-            json.dump(movies, json_file, indent=4)
+        with open(filename, "w") as file:
+            json.dump(movies, file, indent=4)
     except Exception as e:
         print(f"An error occurred in storage_save_movies: {e}")
 
