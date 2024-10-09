@@ -2,6 +2,8 @@ import random
 import difflib
 from datetime import datetime
 
+from common import display_menu, exit_panel
+
 from user_input import (get_valid_partial_or_full_name, choose_add_or_not, get_valid_movie_infos,
                         get_valid_int, get_valid_filter_rating, get_valid_filter_year)
 from utils import (display_sequence_movies, average, median, best_worst, display_close_matches_dict,
@@ -15,7 +17,7 @@ class MovieApp:
         """Initialize the instance variable storage which is an instance object of StorageJson class."""
         self.storage = storage
 
-    def display_list_movies(self):
+    def _display_list_movies(self):
         try:
             # get dictionary of movies from storage object,it is an instance object from class StorageJson,
             # which allows direct access to all the class methods inside the class StorageJson
@@ -54,7 +56,7 @@ class MovieApp:
             except Exception as e:
                 print(f"An unexpected error occurred while adding movie details: {e}")
 
-    def add_movie(self):
+    def _add_movie(self):
 
         movies = self.storage.storage_get_movies()
 
@@ -89,7 +91,7 @@ class MovieApp:
             except Exception as e:
                 print(f"An error occurred in add_movie: {e}")
 
-    def update_movie(self):
+    def _update_movie(self):
 
         movies = self.storage.storage_get_movies()
 
@@ -122,7 +124,7 @@ class MovieApp:
             except Exception as e:
                 print(f"An unexpected error occurred in update_movie: {e}")
 
-    def delete_movie(self):
+    def _delete_movie(self):
         movies = self.storage.storage_get_movies()
 
         if not movies:
@@ -159,7 +161,7 @@ class MovieApp:
             except Exception as e:
                 print(f"An error occurred in delete_movie: {e}")
 
-    def show_status(self):
+    def _show_status(self):
         movies = self.storage.storage_get_movies()
         if not movies:
             print("No movies found")
@@ -171,7 +173,7 @@ class MovieApp:
         except Exception as e:
             print(f"An error occurred in show_status: {e}")
 
-    def get_random_movie(self):
+    def _get_random_movie(self):
         movies = self.storage.storage_get_movies()
         while True:
             try:
@@ -185,7 +187,7 @@ class MovieApp:
             except Exception as e:
                 print(f"An error occurred in get_random_movie: {e}")
 
-    def search_movie(self):
+    def _search_movie(self):
         movies = self.storage.storage_get_movies()
         while True:
             try:
@@ -203,7 +205,7 @@ class MovieApp:
             except Exception as e:
                 print(f"An error occurred in search_movie: {e}")
 
-    def sort_rating(self):
+    def _sort_rating(self):
         movies = self.storage.storage_get_movies()
         try:
             sorted_movies = sorted(movies.items(), key=lambda item: float(item[1]["Rating"]), reverse=True)
@@ -220,7 +222,7 @@ class MovieApp:
         except Exception as e:
             print(f"An error occurred in sort_rating: {e}")
 
-    def sort_year(self):
+    def _sort_year(self):
         movies = self.storage.storage_get_movies()
         try:
             sorted_movies = sorted(movies.items(), key=lambda item: float(item[1]["Year of release"]), reverse=True)
@@ -237,7 +239,7 @@ class MovieApp:
         except Exception as e:
             print(f"An error occurred in sort_year: {e}")
 
-    def filter_movie(self):
+    def _filter_movie(self):
         movies = self.storage.storage_get_movies()
         while True:
             try:
@@ -293,7 +295,7 @@ class MovieApp:
             except Exception as e:
                 print(f"An error occurred in filter_movie: {e}")
 
-    def count_movies_by_year(self):
+    def _count_movies_by_year(self):
 
         movies = self.storage.storage_get_movies()
 
@@ -309,6 +311,34 @@ class MovieApp:
         return num
 
     @staticmethod
-    def generate_website():
+    def _generate_website(self):
         print("Generating website...")
         generate_html()  # Call the function that generates the website
+
+    def run(self):
+        menu = {
+            '0': exit_panel,
+            '1': self._display_list_movies,
+            '2': self._add_movie,
+            '3': self._delete_movie,
+            '4': self._update_movie,
+            '5': self._show_status,
+            '6': self._get_random_movie,
+            '7': self._search_movie,
+            '8': self._sort_rating,
+            '9': self._sort_year,
+            '10': self._filter_movie,
+            '11': self._generate_website
+        }
+
+        while True:
+            display_menu()
+            print()
+            num_str = str(get_valid_int(menu, include_exit=True))
+
+            if num_str == "0":
+                menu[num_str]()
+                break
+            else:
+                menu[num_str]()
+

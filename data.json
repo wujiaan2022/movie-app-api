@@ -40,8 +40,9 @@
         "Rating": "8.8"
     },
     "Abc": {
-        "Year of release": "2024",
-        "Rating": 10.0
+        "Year of release": "2023",
+        "Rating": 5.0,
+        "Poster": "No poster available"
     },
     "Tian": {
         "Year of release": "2024",

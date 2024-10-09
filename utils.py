@@ -4,8 +4,6 @@ import difflib
 from datetime import datetime
 import user_input
 
-from movie_storage import storage_get_movies, storage_add_movie, storage_delete_movie, storage_update_movie
-
 
 # Function to display a list of movies with a sequence number for better readability and user experience
 def display_sequence_movies(movies_dict):
@@ -30,7 +28,7 @@ def display_close_matches_dict(partial, movies):
         # for key in movies: This loops through all the keys (movie titles) in the movies dictionary.
         movies_lower = {key.lower(): key for key in movies}
 
-        close_matches = difflib.get_close_matches(partial.lower(), movies_lower, n=len(movies), cutoff=0.6)
+        close_matches = difflib.get_close_matches(partial.lower(), movies_lower, n=len(movies), cutoff=0.4)
 
         closed_dict = {movies_lower[match]: movies[movies_lower[match]] for match in close_matches}
         if not closed_dict:
