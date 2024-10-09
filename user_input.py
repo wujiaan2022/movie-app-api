@@ -84,17 +84,10 @@ def get_valid_movie_name():
 def choose_add_or_not():
     try:
         while True:
-            answer = input("Enter 'm' to go back to menu;\n"
-                           "'n' to add a new movie name;\n"
-                           "'a' to add this name anyway: ")
-            if not answer:
-                print("Your input can not be empty")
-                continue
-            elif answer not in ["m", "n", "a"]:
-                print("Input error! Please enter m, n, or a")
-                continue
-            else:
-                return answer
+            answer = input("Enter any key to add this name anyway,\n"
+                           "or 'm' to go back to menu;\n"
+                           "'n' to add a new movie name: ").strip().lower()  # Stripping whitespaces and lowercasing
+            return answer
     except Exception as e:
         print(f"An error occurred in choose_add_or_not. {e}")
 

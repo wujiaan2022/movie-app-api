@@ -1,11 +1,17 @@
 import requests
+from dotenv import load_dotenv
 import os
 
-API_KEY = "f388b32f"
+
+# Load environment variables from .env file
+load_dotenv()
+
+# Access the API key
+api_key = os.getenv("API_KEY")
 
 
 def get_simple_infos_from_api(name):
-    url = f"http://www.omdbapi.com/?apikey={API_KEY}&t={name}"
+    url = f"http://www.omdbapi.com/?apikey={api_key}&t={name}"
 
     try:
         response = requests.get(url)

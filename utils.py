@@ -7,38 +7,18 @@ import user_input
 from movie_storage import storage_get_movies, storage_add_movie, storage_delete_movie, storage_update_movie
 
 
-# assign each movie to a sequence number for better readability and user experience
-def assign_sequence_to_movies(movies):
-    try:
-        sequence_movies = {}
-        i = 1
-        for name, infos in movies.items():
-            year = infos["Year of release"]
-            rating = infos["Rating"]
-            sequence_movies[str(i)] = {name: {"Year of release": year, "Rating": rating}}
-            i += 1
-        return sequence_movies
-    except Exception as e:
-        print(f"An error occurred in assign_sequence_to_movies: {e}")
-
-
 # Function to display a list of movies with a sequence number for better readability and user experience
-def display_sequence_movies(sequence_movies):
+def display_sequence_movies(movies_dict):
     try:
-        print(f"\n{len(sequence_movies)} movies in total\n")
-
-        for i, movie in sequence_movies.items():
-            name = list(movie.keys())[0]
-            year = movie[name]["Year of release"]
-            rating = movie[name]["Rating"]
-            print(f"{i}. {name} ({year}): {rating}")
+        if movies_dict:
+            # Enumerate through the movies and start counting from 1
+            for i, (name, details) in enumerate(movies_dict.items(), start=1):
+                year = details.get("Year of release", "Unknown year")
+                rating = details.get("Rating", "Unknown rating")
+                print(f"{i}. {name}, {year}, {rating}")
 
     except ValueError as ve:
         print(f"Value error occurred in display_sequence_movies: {ve}")
-    except IndexError as ie:
-        print(f"Index error occurred in display_sequence_movies: {ie}")
-    except KeyError as ke:
-        print(f"Key error occurred in display_sequence_movies: {ke}")
     except Exception as e:
         print(f"An error occurred in display_sequence_movies: {e}")
 
