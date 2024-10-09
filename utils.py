@@ -23,12 +23,37 @@ def display_sequence_movies(movies_dict):
         print(f"An error occurred in display_sequence_movies: {e}")
 
 
+def display_close_matches_dict(partial, movies):
+
+    try:
+
+        # for key in movies: This loops through all the keys (movie titles) in the movies dictionary.
+        movies_lower = {key.lower(): key for key in movies}
+
+        close_matches = difflib.get_close_matches(partial.lower(), movies_lower, n=len(movies), cutoff=0.6)
+
+        closed_dict = {movies_lower[match]: movies[movies_lower[match]] for match in close_matches}
+        if not closed_dict:
+            print("Cannot find any match movie.")
+        else:
+            print(f"There are {len(closed_dict)} close matches to the move name you entered:")
+            display_sequence_movies(closed_dict)
+            return closed_dict
+    except KeyError as ve:
+        print(f"Key error in display_partial_matches: {ve}")
+    except Exception as e:
+        print(f"An error occurred in display_partial_matches: {e}")
+
+
 # display partial matches with sequence number after user enter part of movie name
 def display_partial_matches(partial_name, movies):
     try:
         partial_matches = {name: infos for name, infos in movies.item() if partial_name.lower() in name.lower()}
-        sequence_movies = assign_sequence_to_movies(partial_matches)
-        display_sequence_movies(sequence_movies)
+        if not partial_matches:
+            print("Cannot find any match movie. Please try again.")
+        else:
+            print(f"There are {len(partial_matches)} close matches to the move name you entered:")
+            display_sequence_movies(partial_matches)
     except KeyError as ve:
         print(f"Key error in display_partial_matches: {ve}")
     except Exception as e:
@@ -36,8 +61,8 @@ def display_partial_matches(partial_name, movies):
 
 
 # Function to calculate average rating
-def average():
-    movies = storage_get_movies()
+def average(movies):
+
     try:
         list_rating = []
         for infos in movies.values():
@@ -52,8 +77,8 @@ def average():
 
 
 # Function to calculate median rating
-def median():
-    movies = storage_get_movies()
+def median(movies):
+
     try:
         list_ratings = []
         for infos in movies.values():
@@ -73,8 +98,8 @@ def median():
 
 
 # Function to find the best and worst rated movies
-def best_worst():
-    movies = storage_get_movies()
+def best_worst(movies):
+
     try:
         sorted_movies = sorted(movies.items(), key=lambda item: float(item[1]["Rating"]))
         print(f"The best movie is {sorted_movies[-1][0]} with a rating of {sorted_movies[-1][1]["Rating"]}")
@@ -83,31 +108,5 @@ def best_worst():
         print(f"An error occurred in best_worst: {e}")
 
 
-# def close_matches_dict(partial, movies):
-#
-#     movies_lower = []
-#     for key in movies.keys():
-#         movies_lower.append(key.lower())
-#
-#     close_matches = difflib.get_close_matches(partial.lower(), movies_lower, n=len(movies), cutoff=0.6)
-#
-#     close_dict = {}
-#     for match in close_matches:
-#         for name, infos in movies.items():
-#             if match == name.lower():
-#                 close_dict[name] = infos
-#
-#     return close_dict
 
-
-def close_matches_dict(partial, movies):
-
-    # for key in movies: This loops through all the keys (movie titles) in the movies dictionary.
-    movies_lower = {key.lower(): key for key in movies}
-
-    close_matches = difflib.get_close_matches(partial.lower(), movies_lower, n=len(movies), cutoff=0.6)
-
-    closed_dict = {movies_lower[match]: movies[movies_lower[match]] for match in close_matches}
-
-    return closed_dict
 

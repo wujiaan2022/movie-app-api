@@ -4,7 +4,8 @@ from datetime import datetime
 
 from user_input import (get_valid_partial_or_full_name, choose_add_or_not, get_valid_movie_infos,
                         get_valid_int, get_valid_filter_rating, get_valid_filter_year)
-from utils import display_sequence_movies, average, median, best_worst, close_matches_dict
+from utils import (display_sequence_movies, average, median, best_worst, display_close_matches_dict,
+                   display_partial_matches)
 
 from web_generate_from_api import generate_html
 
@@ -68,13 +69,8 @@ class MovieApp:
                     break
 
                 # check name existence by checking close matches in the movie list
-                close_matches = difflib.get_close_matches(movie_name, movies.keys(), n=len(movies), cutoff=0.7)
-
+                close_matches = display_close_matches_dict(movie_name, movies)
                 if close_matches:
-                    print(f"There are {len(close_matches)} close matches to the move name you entered:")
-                    for match in close_matches:
-                        print(f"- {match}")
-
                     answer = choose_add_or_not()
 
                     if answer == "m":
@@ -104,13 +100,8 @@ class MovieApp:
                 if movie_name.lower() == "q":
                     break
 
-                close_matches = {name: infos for name, infos in movies.items() if movie_name.lower() in name.lower()}
+                close_matches = display_close_matches_dict(movie_name, movies)
 
-                if not close_matches:
-                    print("Cannot find any match movie. Please try again.")
-                    continue
-
-                display_sequence_movies(close_matches)
                 print("Enter the sequence number of the movie to update.")
                 selected_index = int(get_valid_int(close_matches))
 
@@ -145,23 +136,19 @@ class MovieApp:
                 if movie_name.lower() == "q":
                     break
 
-                close_matches = close_matches_dict(movie_name, movies)
-                if not close_matches:
-                    print("The movie name does not exist. Please try again.")
-                else:
-                    print(f"There are {len(close_matches)} close matches:")
-                    display_sequence_movies(close_matches)
-                    print("Enter the number of the movie to delete.")
-                    selected_index = int(get_valid_int(close_matches))
+                close_matches = display_close_matches_dict(movie_name, movies)
 
-                    if selected_index == 0:
-                        break
+                print("Enter the number of the movie to delete.")
+                selected_index = int(get_valid_int(close_matches))
 
-                    movie_name = list(close_matches.keys())[selected_index - 1]
-                    confirmation = input(f"Are you sure you want to delete '{movie_name}'? (y/n): ").strip().lower()
-                    if confirmation == 'y':
-                        self.storage.storage_delete_movie(movie_name)
-                        print(f"Movie '{movie_name}' has been deleted successfully!")
+                if selected_index == 0:
+                    break
+
+                movie_name = list(close_matches.keys())[selected_index - 1]
+                confirmation = input(f"Are you sure you want to delete '{movie_name}'? (y/n): ").strip().lower()
+                if confirmation == 'y':
+                    self.storage.storage_delete_movie(movie_name)
+                    print(f"Movie '{movie_name}' has been deleted successfully!")
 
                 continue_deleting = input("Press any key to delete another movie, or 'q' for quit: ").strip().lower()
                 if continue_deleting == "q":
@@ -172,3 +159,156 @@ class MovieApp:
             except Exception as e:
                 print(f"An error occurred in delete_movie: {e}")
 
+    def show_status(self):
+        movies = self.storage.storage_get_movies()
+        if not movies:
+            print("No movies found")
+            return
+        try:
+            average(movies)
+            median(movies)
+            best_worst(movies)
+        except Exception as e:
+            print(f"An error occurred in show_status: {e}")
+
+    def get_random_movie(self):
+        movies = self.storage.storage_get_movies()
+        while True:
+            try:
+                random_movie = random.choice(list(movies.items()))
+                print(f"The random movie is {random_movie[0]} with a rating of {random_movie[1]}")
+
+                answer = input("Press any key to get another random movie, 'q' to quit: ").strip().lower()
+                if answer == "q":
+                    break
+
+            except Exception as e:
+                print(f"An error occurred in get_random_movie: {e}")
+
+    def search_movie(self):
+        movies = self.storage.storage_get_movies()
+        while True:
+            try:
+                movie_name = get_valid_partial_or_full_name()
+
+                if movie_name.lower() == "q":
+                    break
+
+                display_close_matches_dict(movie_name, movies)
+
+                answer = input("Press any key to search another movie, 'q' to quit: ").strip().lower()
+                if answer == "q":
+                    break
+
+            except Exception as e:
+                print(f"An error occurred in search_movie: {e}")
+
+    def sort_rating(self):
+        movies = self.storage.storage_get_movies()
+        try:
+            sorted_movies = sorted(movies.items(), key=lambda item: float(item[1]["Rating"]), reverse=True)
+            print("Movies sorted by rating (highest to lowest):")
+            sorted_dict = dict(sorted_movies)
+            display_sequence_movies(sorted_dict)
+
+        except ValueError as ve:
+            print(f"Value error occurred in sort_ration: {ve}")
+        except IndexError as ie:
+            print(f"Index error occurred in sort_ration: {ie}")
+        except KeyError as ke:
+            print(f"Key error occurred in sort_ration: {ke}")
+        except Exception as e:
+            print(f"An error occurred in sort_rating: {e}")
+
+    def sort_year(self):
+        movies = self.storage.storage_get_movies()
+        try:
+            sorted_movies = sorted(movies.items(), key=lambda item: float(item[1]["Year of release"]), reverse=True)
+            print("Movies sorted by year of release (highest to lowest):")
+            sorted_dict = dict(sorted_movies)
+            display_sequence_movies(sorted_dict)
+
+        except ValueError as ve:
+            print(f"Value error occurred in sort_year: {ve}")
+        except IndexError as ie:
+            print(f"Index error occurred in sort_year: {ie}")
+        except KeyError as ke:
+            print(f"Key error occurred in sort_year: {ke}")
+        except Exception as e:
+            print(f"An error occurred in sort_year: {e}")
+
+    def filter_movie(self):
+        movies = self.storage.storage_get_movies()
+        while True:
+            try:
+                filter_rating = get_valid_filter_rating()
+
+                if str(filter_rating).lower() == "q":
+                    break
+
+                if filter_rating is None:
+                    rating_matches = movies
+
+                else:
+                    rating_matches = {movie: infos for movie, infos in movies.items()
+                                      if float(infos["Rating"]) >= float(filter_rating)}
+
+                print("\nEnter start year (leave blank for no start year).")
+                filter_start_year = get_valid_filter_year()
+
+                if str(filter_start_year).lower() == "q":
+                    break
+
+                if filter_start_year is None:
+                    start_year_matches = rating_matches
+                else:
+                    start_year_matches = {movie: infos for movie, infos in rating_matches.items()
+                                          if int(infos["Year of release"]) >= int(filter_start_year)}
+
+                print("\nEnter end year (leave blank for no end year).")
+                filter_end_year = get_valid_filter_year()
+
+                if str(filter_end_year).lower() == "q":
+                    break
+
+                if filter_end_year is None:
+                    end_year_matches = start_year_matches
+                else:
+                    end_year_matches = {movie: infos for movie, infos in start_year_matches.items()
+                                        if int(infos["Year of release"]) <= int(filter_end_year)}
+
+                display_sequence_movies(end_year_matches)
+
+                answer = input("\nPress any key to filter other movies, or 'q' to quit: ").strip().lower()
+                if answer == "q":
+                    break
+
+            except ValueError as ve:
+                print(f"Type error occurred in filter_movie: {ve}.")
+            except TypeError as te:
+                print(f"Type error occurred in filter_movie: {te}.")
+                break
+            except KeyError as ke:
+                print(f"Key error occurred in filter_movie: {ke}")
+            except Exception as e:
+                print(f"An error occurred in filter_movie: {e}")
+
+    def count_movies_by_year(self):
+
+        movies = self.storage.storage_get_movies()
+
+        # prompt the user to enter the year of release
+        year = input("Please enter the year of release: ")
+
+        # create a dict of movies of the given year
+        movies_year = {name: infos for name, infos in movies.items() if str(infos["Year of release"]) == year}
+
+        # count the movies
+        num = len(movies_year)
+
+        return num
+
+    @staticmethod
+    def generate_website():
+        print("Generating website...")
+        generate_html()  # Call the function that generates the website

@@ -174,12 +174,12 @@ def update_movie():
             print(f"An error occurred in update_movie: {e}")
 
 
-def show_status():
+def show_status(movies):
 
     try:
-        average()
-        median()
-        best_worst()
+        average(movies)
+        median(movies)
+        best_worst(movies)
     except Exception as e:
         print(f"An error occurred in show_status: {e}")
 
@@ -323,22 +323,21 @@ def filter_movie():
             print(f"An error occurred in filter_movie: {e}")
 
 
-# def count_movies_by_year():
-#
-#     movies = storage_get_movies()
-#
-#     # prompt the user to enter the year of release
-#     year = input("Please enter the year of release: ")
-#
-#     # create a dict of movies of the given year
-#     movies_year = {name: infos for name, infos in movies.items() if infos["Year of release"] == year}
-#
-#     # count the movies
-#     num = len(movies_year)
-#
-#     return num
-#
-#
+def count_movies_by_year():
+
+    movies = storage_get_movies()
+
+    # prompt the user to enter the year of release
+    year = input("Please enter the year of release: ")
+
+    # create a dict of movies of the given year
+    movies_year = {name: infos for name, infos in movies.items() if infos["Year of release"] == year}
+
+    # count the movies
+    num = len(movies_year)
+
+    return num
+
 # print(count_movies_by_year())
 
 
