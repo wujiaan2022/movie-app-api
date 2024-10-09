@@ -64,10 +64,10 @@ def get_valid_int(dic, include_exit=False):
 
 
 # prompt and validate the user input for the movie name before adding
-def get_valid_movie_name():
+def get_valid_partial_or_full_name():
     while True:
         try:
-            movie_name = input("Please enter the movie name you want to add(or 'q' for quit): ").strip().title()
+            movie_name = input("Please enter partial or full name of the movie (or 'q' for quit): ").strip().title()
             if movie_name.lower() == "q":
                 return "q"
             if not movie_name:
@@ -99,19 +99,22 @@ def get_valid_movie_infos():
             movie_year = input("Please enter the year of release(or 'q' for quit): ")
 
             if movie_year.lower() == "q":
-                return "q", None
+                return "q", None, None
 
             movie_year = int(movie_year)
             if movie_year < 1888 or movie_year > datetime.now().year:
                 print("Input error! Movie year cannot be earlier than 1888 or later than the current year.")
                 continue
 
+            poster = (input("Please enter the poster address (or press enter to skip): ").strip()
+                      or "No poster available")
+
             while True:
                 try:
                     movie_rating = input("Please enter the rating (0-10), or 'q' for quit: ")
 
                     if movie_rating.lower() == "q":
-                        return "q", None
+                        return "q", None, None
 
                     movie_rating = float(movie_rating)
                     if movie_rating < 0 or movie_rating > 10:
@@ -125,31 +128,13 @@ def get_valid_movie_infos():
 
             converted_year = str(movie_year)
             rounded_rating = round(movie_rating, 1)
-            return converted_year, rounded_rating
+
+            return converted_year, rounded_rating, poster
 
         except ValueError:
             print("Input error! Please enter a valid number for the year of release.")
         except Exception as e:
             print(f"An error occurred in get_valid_movie_infos: {e}")
-
-
-# prompt and validate user input for partial name of movie before delete or update movie
-def get_valid_partial_name():
-    while True:
-        try:
-            partial_name = input("Please enter part of the movie name(or 'q' for quit): ").strip().title()
-
-            if partial_name.lower() == "q":
-                return "q"
-
-            if not partial_name:
-                print("Movie name cannot be empty. Please try again.")
-            elif not partial_name.replace(" ", "").isalnum():
-                print("Movie name should only contain alphanumeric characters and spaces. Please try again.")
-            else:
-                return partial_name
-        except Exception as e:
-            print(f"An error occurred in get_valid_partial_name: {e}")
 
 
 def get_valid_filter_rating():

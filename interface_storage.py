@@ -42,7 +42,7 @@ class InterfaceStorage(ABC):
         pass
 
     @abstractmethod
-    def storage_add_movie(self, title, year, rating, poster):
+    def storage_add_or_update_movie(self, title, year, rating, poster):
         """
         Abstract method to add a new movie to the storage.
         """
@@ -63,17 +63,3 @@ class InterfaceStorage(ABC):
         """
         pass
 
-    @abstractmethod
-    def storage_update_movie(self, title, year, rating, poster):
-        """
-        Abstract method to update an existing movie in the storage.
-
-        Parameters:
-        -----------
-        None
-
-        Returns:
-        --------
-        None
-        """
-        pass

@@ -41,9 +41,9 @@ class StorageJson(InterfaceStorage):
         except IOError as e:
             print(f"An error occurred while saving the movies: {e}")
 
-    def storage_add_movie(self, title, year, rating, poster):
+    def storage_add_or_update_movie(self, title, year, rating, poster):
         """
-        Add a new movie to the storage.
+        Add or update a new movie to the storage.
 
         Parameters:
         -----------
@@ -79,34 +79,6 @@ class StorageJson(InterfaceStorage):
             del movies[title]
             self.storage_save_movies(movies)
             print(f"Movie '{title}' has been deleted.")
-        else:
-            print(f"Movie '{title}' does not exist. No changes made.")
-
-    def storage_update_movie(self, title, year, rating, poster):
-        """
-        Updates an existing movie in the storage.
-
-        Parameters:
-        -----------
-        title : str
-            The title of the movie to update.
-        year : int
-            The updated year of release.
-        rating : float
-            The updated movie rating.
-        poster : str
-            The updated URL or path of the movie poster.
-        """
-        movies = self.storage_get_movies()
-
-        if title in movies:
-            movies[title] = {
-                "Year of release": year,
-                "Rating": rating,
-                "Poster": poster
-            }
-            self.storage_save_movies(movies)
-            print(f"Movie '{title}' has been updated.")
         else:
             print(f"Movie '{title}' does not exist. No changes made.")
 
