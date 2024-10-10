@@ -1,0 +1,12 @@
+{
+    "Titanic": {
+        "Year of release": "1997",
+        "Rating": "7.9",
+        "Poster": "https://m.media-amazon.com/images/M/MV5BMDdmZGU3NDQtY2E5My00ZTliLWIzOTUtMTY4ZGI1YjdiNjk3XkEyXkFqcGdeQXVyNTA4NzY1MzY@._V1_SX300.jpg"
+    },
+    "Mission: Impossible": {
+        "Year of release": "1996",
+        "Rating": "7.2",
+        "Poster": "https://m.media-amazon.com/images/M/MV5BOGZjNDlkMTYtMTJkZi00OTkzLWI4NDEtYTA2ODQyMjcwYTdlXkEyXkFqcGc@._V1_SX300.jpg"
+    }
+}

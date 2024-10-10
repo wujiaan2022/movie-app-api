@@ -1,5 +1,6 @@
 import random
-import difflib
+import json
+import requests
 from datetime import datetime
 
 from common import display_menu, exit_panel
@@ -35,6 +36,42 @@ class MovieApp:
             print(f"An error occurred in display_list_movie:{ke}")
         except Exception as e:
             print(f"An unexpected error occurred in display_list_movie:{e}")
+
+    def add_movie_from_api(self, base_url, api_key):
+        while True:
+            try:
+                # Get movie name from user input
+                movie_name = get_valid_partial_or_full_name()
+
+                # Search movie name through API
+                url = f"{base_url}?apikey={api_key}&t={movie_name}"
+                response = requests.get(url)
+
+                # Parse response
+                if response.status_code == 200:
+                    parsed = response.json()
+
+                    if not parsed:
+                        answer = input("Movie not found. Press any key to try again, or 'q' to quit: ")
+                        if answer.lower().strip() == "q":
+                            break
+                        continue
+
+                    # Extract the relevant information from the API response
+                    title = parsed.get("Title", "Unknown Title")
+                    year = parsed.get("Year", "Unknown year")
+                    rating = parsed.get("imdbRating", "Unknown rating")
+                    poster = parsed.get("Poster", "Unknown poster")
+
+                    # Call the storage method to add or update the movie
+                    self.storage.storage_add_or_update_movie(title, year, rating, poster)
+                    print(f"Movie '{movie_name}' added or updated successfully.")
+                    answer = input("Press any key to add another movie, 'q' for quit: ").strip().lower()
+                    if answer == "q":
+                        break
+
+            except Exception as e:
+                print(f"An unexpected error occurred in add_movie_from_api: {e}")
 
     def get_rest_save_all(self, movie_name, key_word):
         """Helper method to add additional movie information (year, rating, poster)."""

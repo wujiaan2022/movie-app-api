@@ -20,10 +20,18 @@ class StorageJson(InterfaceStorage):
         """
         try:
             with open(self.file_path, "r") as file:
-                movies = json.load(file)
+                # Check if the file is empty before attempting to load
+                if file.read(1):  # Check if there's any content
+                    file.seek(0)  # Reset the file pointer after reading the first character
+                    movies = json.load(file)
+                else:
+                    movies = {}  # Return empty dict if the file is empty
             return movies
         except FileNotFoundError:
             # Return an empty dictionary if the file does not exist
+            return {}
+        except json.JSONDecodeError:
+            # Return an empty dictionary if the file content is invalid JSON
             return {}
 
     def storage_save_movies(self, movies):
