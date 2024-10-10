@@ -1,14 +1,5 @@
-import sys
-import random
-import difflib
-from datetime import datetime
-
-import storage_json
+from storage import storage_json
 import movie_app
-
-from common import display_menu, exit_panel
-from user_input import (choose_add_or_not, get_valid_movie_infos, get_valid_int)
-from utils import display_sequence_movies, average, median, best_worst
 
 
 # Main function to drive the program

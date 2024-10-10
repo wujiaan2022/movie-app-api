@@ -1,5 +1,4 @@
-from movie_app import MovieApp
-from storage_json import StorageJson
+from storage.storage_json import StorageJson
 
 from dotenv import load_dotenv
 import os
@@ -28,7 +27,7 @@ if response.status_code == 200:
     rating = parsed.get("imdbRating", "Unknown Rating")
     poster = parsed.get("Poster", "Unknown Poster")
 
-    storage = StorageJson('storage_from_api.json')
+    storage = StorageJson('data_from_api.json')
     storage.storage_add_or_update_movie(title, year, rating, poster)
     print(f"Movie '{title}' added or updated successfully.")
 

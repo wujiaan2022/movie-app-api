@@ -1,19 +1,19 @@
 # from movie_app import MovieApp
-# from storage_json import StorageJson
+# from storage.storage_json import StorageJson
 #
 # storage = StorageJson('data.json')
 # movie_app = MovieApp(storage)
 # movie_app.run()
-
+#
 # from movie_app import MovieApp
-# from storage_csv import StorageCsv
+# from storage.storage_csv import StorageCsv
 #
 # storage = StorageCsv('data.csv')
 # movie_app = MovieApp(storage)
 # movie_app.run()
 
 from movie_app import MovieApp
-from storage_json import StorageJson
+from storage.storage_json import StorageJson
 from dotenv import load_dotenv
 import os
 
@@ -31,9 +31,9 @@ url = f"{base_url}?apikey={api_key}&t={"Titanic"}"
 
 base_url = "http://www.omdbapi.com/"
 
-storage = StorageJson('storage_from_api.json')
+storage = StorageJson('data_from_api.json')
 movie_app = MovieApp(storage)
-storage = StorageJson('storage_from_api.json')
+storage = StorageJson('data_from_api.json')
 movie_app.add_movie_from_api(base_url, api_key)
 
 

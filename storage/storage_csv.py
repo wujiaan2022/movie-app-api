@@ -1,5 +1,5 @@
 import csv
-from interface_storage import InterfaceStorage
+from storage.interface_storage import InterfaceStorage
 
 
 class StorageCsv(InterfaceStorage):
@@ -26,7 +26,7 @@ class StorageCsv(InterfaceStorage):
                     # Cast row as dictionary explicitly to avoid "unresolved attribute" errors
                     row: dict[str, str] = dict(row)
 
-                    movie_name = row.get('Movie')  # Safely access movie name
+                    movie_name = row.get('../movie')  # Safely access movie name
                     if not movie_name:
                         continue  # Skip if the movie name is missing
 

@@ -1,5 +1,5 @@
 import json
-from interface_storage import InterfaceStorage
+from storage.interface_storage import InterfaceStorage
 
 
 class StorageJson(InterfaceStorage):

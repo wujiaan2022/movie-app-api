@@ -45,13 +45,13 @@ class MovieApp:
 
                 # Search movie name through API
                 url = f"{base_url}?apikey={api_key}&t={movie_name}"
-                response = requests.get(url)
+                response = requests.get(url, timeout=10)  # Add a timeout to handle hanging connections
 
                 # Parse response
                 if response.status_code == 200:
                     parsed = response.json()
 
-                    if not parsed:
+                    if not parsed or parsed.get("Response") == "False":
                         answer = input("Movie not found. Press any key to try again, or 'q' to quit: ")
                         if answer.lower().strip() == "q":
                             break
@@ -69,6 +69,21 @@ class MovieApp:
                     answer = input("Press any key to add another movie, 'q' for quit: ").strip().lower()
                     if answer == "q":
                         break
+
+                else:
+                    print(f"Error fetching movie data: {response.status_code}. Please try again.")
+
+            except requests.ConnectionError:
+                print("Network error: Unable to reach the API. Please check your internet connection.")
+                retry = input("Press any key to retry, or 'q' to quit: ").strip().lower()
+                if retry == "q":
+                    break
+
+            except requests.Timeout:
+                print("The request timed out. The server might be too slow or unresponsive.")
+                retry = input("Press any key to retry, or 'q' to quit: ").strip().lower()
+                if retry == "q":
+                    break
 
             except Exception as e:
                 print(f"An unexpected error occurred in add_movie_from_api: {e}")
