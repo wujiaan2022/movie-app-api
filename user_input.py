@@ -63,6 +63,22 @@ def get_valid_int(dic, include_exit=False):
             print(f"An error occurred in get_valid_int: {e}")
 
 
+def get_valid_full_name():
+    while True:
+        try:
+            movie_name = input("Please enter the full name of the movie (or 'q' for quit): ").strip().title()
+            if movie_name.lower() == "q":
+                return "q"
+            if not movie_name:
+                print("Movie name cannot be empty. Please try again.")
+            elif not movie_name.replace(" ", "").isalnum():
+                print("Movie name should only contain alphanumeric characters and spaces. Please try again.")
+            else:
+                return movie_name
+        except Exception as e:
+            print(f"An error occurred in get_valid_full_name: {e}")
+
+
 # prompt and validate the user input for the movie name before adding
 def get_valid_partial_or_full_name():
     while True:

@@ -7,6 +7,17 @@ import user_input
 
 # Function to display a list of movies with a sequence number for better readability and user experience
 def display_sequence_movies(movies_dict):
+    """
+        Display a list of movies with sequence numbers.
+
+        Args:
+            movies_dict (dict): Dictionary of movies where the keys are movie titles
+                                and the values are dictionaries containing movie details.
+
+        This function enumerates through the dictionary of movies, displaying each
+        movie with a sequence number, year of release, and IMDb rating. If the movie
+        details are missing, it displays 'Unknown' for the missing information.
+        """
     try:
         if movies_dict:
             # Enumerate through the movies and start counting from 1
@@ -22,6 +33,22 @@ def display_sequence_movies(movies_dict):
 
 
 def display_close_matches_dict(partial, movies):
+    """
+        Display a list of close matches for a given partial movie name.
+
+        Args:
+            partial (str): Partial movie name input by the user.
+            movies (dict): Dictionary of movies where the keys are movie titles
+                           and the values are dictionaries containing movie details.
+
+        This function searches for close matches to the partial movie name
+        in the list of movie titles and displays the matched movies along
+        with their details in sequence. If no matches are found, it prints
+        an appropriate message.
+
+        Returns:
+            dict: Dictionary of movies that match the partial name.
+        """
 
     try:
 
@@ -45,6 +72,18 @@ def display_close_matches_dict(partial, movies):
 
 # display partial matches with sequence number after user enter part of movie name
 def display_partial_matches(partial_name, movies):
+    """
+        Display partial matches for a given movie name input.
+
+        Args:
+            partial_name (str): Partial name of the movie entered by the user.
+            movies (dict): Dictionary of movies where the keys are movie titles
+                           and the values are dictionaries containing movie details.
+
+        This function searches for partial matches in the movie names and displays
+        the matches along with their details in sequence. If no matches are found,
+        it prompts the user to try again.
+        """
     try:
         partial_matches = {name: infos for name, infos in movies.item() if partial_name.lower() in name.lower()}
         if not partial_matches:
@@ -60,6 +99,16 @@ def display_partial_matches(partial_name, movies):
 
 # Function to calculate average rating
 def average(movies):
+    """
+        Calculate and display the average rating of all movies.
+
+        Args:
+            movies (dict): Dictionary of movies where the keys are movie titles
+                           and the values are dictionaries containing movie details.
+
+        This function calculates the average IMDb rating of all movies in the list
+        and prints the result. If an error occurs, it handles the exception.
+        """
 
     try:
         list_rating = []
@@ -76,6 +125,16 @@ def average(movies):
 
 # Function to calculate median rating
 def median(movies):
+    """
+        Calculate and display the median rating of all movies.
+
+        Args:
+            movies (dict): Dictionary of movies where the keys are movie titles
+                           and the values are dictionaries containing movie details.
+
+        This function calculates the median IMDb rating of all movies in the list
+        and prints the result. It handles cases where the number of movies is odd or even.
+        """
 
     try:
         list_ratings = []
@@ -97,6 +156,16 @@ def median(movies):
 
 # Function to find the best and worst rated movies
 def best_worst(movies):
+    """
+        Find and display the best and worst rated movies.
+
+        Args:
+            movies (dict): Dictionary of movies where the keys are movie titles
+                           and the values are dictionaries containing movie details.
+
+        This function finds the movie with the highest and lowest IMDb rating in the list
+        and prints their titles and ratings.
+        """
 
     try:
         sorted_movies = sorted(movies.items(), key=lambda item: float(item[1]["Rating"]))

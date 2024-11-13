@@ -1,24 +1,42 @@
 import random
-import json
-import requests
-from datetime import datetime
 
 from common import display_menu, exit_panel
 
-from user_input import (get_valid_partial_or_full_name, choose_add_or_not, get_valid_movie_infos,
+from user_input import (get_valid_full_name, get_valid_partial_or_full_name, choose_add_or_not, get_valid_movie_infos,
                         get_valid_int, get_valid_filter_rating, get_valid_filter_year)
 from utils import (display_sequence_movies, average, median, best_worst, display_close_matches_dict,
                    display_partial_matches)
 
 from web_generate_from_api import generate_html
 
+from dotenv import load_dotenv
+import os
+import requests
+
+# Load environment variables from .env file
+load_dotenv()
+
 
 class MovieApp:
     def __init__(self, storage):
-        """Initialize the instance variable storage which is an instance object of StorageJson class."""
+        """
+        Initialize the MovieApp with a storage object.
+
+        Args:
+            storage: An instance of the StorageJson class that handles storing and
+                     retrieving movie data.
+        """
         self.storage = storage
+        self.api_key = os.getenv("API_KEY")
+        self.base_url = os.getenv("BASE_URL")
 
     def _display_list_movies(self):
+        """
+                Display the list of movies stored in the storage.
+
+                Fetches all movies from the storage and displays them in a formatted sequence.
+                If no movies are found, prints an appropriate message.
+                """
         try:
             # get dictionary of movies from storage object,it is an instance object from class StorageJson,
             # which allows direct access to all the class methods inside the class StorageJson
@@ -37,59 +55,14 @@ class MovieApp:
         except Exception as e:
             print(f"An unexpected error occurred in display_list_movie:{e}")
 
-    def add_movie_from_api(self, base_url, api_key):
-        while True:
-            try:
-                # Get movie name from user input
-                movie_name = get_valid_partial_or_full_name()
-
-                # Search movie name through API
-                url = f"{base_url}?apikey={api_key}&t={movie_name}"
-                response = requests.get(url, timeout=10)  # Add a timeout to handle hanging connections
-
-                # Parse response
-                if response.status_code == 200:
-                    parsed = response.json()
-
-                    if not parsed or parsed.get("Response") == "False":
-                        answer = input("Movie not found. Press any key to try again, or 'q' to quit: ")
-                        if answer.lower().strip() == "q":
-                            break
-                        continue
-
-                    # Extract the relevant information from the API response
-                    title = parsed.get("Title", "Unknown Title")
-                    year = parsed.get("Year", "Unknown year")
-                    rating = parsed.get("imdbRating", "Unknown rating")
-                    poster = parsed.get("Poster", "Unknown poster")
-
-                    # Call the storage method to add or update the movie
-                    self.storage.storage_add_or_update_movie(title, year, rating, poster)
-                    print(f"Movie '{movie_name}' added or updated successfully.")
-                    answer = input("Press any key to add another movie, 'q' for quit: ").strip().lower()
-                    if answer == "q":
-                        break
-
-                else:
-                    print(f"Error fetching movie data: {response.status_code}. Please try again.")
-
-            except requests.ConnectionError:
-                print("Network error: Unable to reach the API. Please check your internet connection.")
-                retry = input("Press any key to retry, or 'q' to quit: ").strip().lower()
-                if retry == "q":
-                    break
-
-            except requests.Timeout:
-                print("The request timed out. The server might be too slow or unresponsive.")
-                retry = input("Press any key to retry, or 'q' to quit: ").strip().lower()
-                if retry == "q":
-                    break
-
-            except Exception as e:
-                print(f"An unexpected error occurred in add_movie_from_api: {e}")
-
     def get_rest_save_all(self, movie_name, key_word):
-        """Helper method to add additional movie information (year, rating, poster)."""
+        """
+        Helper method to add additional movie information (year, rating, poster).
+
+        Args:
+            movie_name: The name of the movie being saved.
+            key_word: Either 'added' or 'updated', used in the success message.
+        """
 
         while True:
             try:
@@ -109,6 +82,12 @@ class MovieApp:
                 print(f"An unexpected error occurred while adding movie details: {e}")
 
     def _add_movie(self):
+        """
+                Add a new movie to the storage by prompting the user for the movie's name and details.
+
+                This method checks if the movie already exists by searching for close matches in the
+                movie list. If no matches are found, it proceeds to add the new movie.
+                """
 
         movies = self.storage.storage_get_movies()
 
@@ -144,6 +123,11 @@ class MovieApp:
                 print(f"An error occurred in add_movie: {e}")
 
     def _update_movie(self):
+        """
+                Update an existing movie in the storage by prompting the user to select a movie and modify its details.
+
+                The user is shown close matches for the entered movie name and can select one to update.
+                """
 
         movies = self.storage.storage_get_movies()
 
@@ -177,6 +161,11 @@ class MovieApp:
                 print(f"An unexpected error occurred in update_movie: {e}")
 
     def _delete_movie(self):
+        """
+                Delete a movie from the storage by prompting the user to select a movie and confirm the deletion.
+
+                The user is shown close matches for the entered movie name and can select one to delete.
+                """
         movies = self.storage.storage_get_movies()
 
         if not movies:
@@ -214,6 +203,9 @@ class MovieApp:
                 print(f"An error occurred in delete_movie: {e}")
 
     def _show_status(self):
+        """
+                Display statistics about the movies, including average, median, and best/worst rated movies.
+                """
         movies = self.storage.storage_get_movies()
         if not movies:
             print("No movies found")
@@ -226,6 +218,9 @@ class MovieApp:
             print(f"An error occurred in show_status: {e}")
 
     def _get_random_movie(self):
+        """
+                Select and display a random movie from the storage.
+                """
         movies = self.storage.storage_get_movies()
         while True:
             try:
@@ -240,6 +235,9 @@ class MovieApp:
                 print(f"An error occurred in get_random_movie: {e}")
 
     def _search_movie(self):
+        """
+                Search for movies in the storage based on a partial or full name entered by the user.
+                """
         movies = self.storage.storage_get_movies()
         while True:
             try:
@@ -258,6 +256,9 @@ class MovieApp:
                 print(f"An error occurred in search_movie: {e}")
 
     def _sort_rating(self):
+        """
+                Sort and display the movies based on their IMDb rating in descending order.
+                """
         movies = self.storage.storage_get_movies()
         try:
             sorted_movies = sorted(movies.items(), key=lambda item: float(item[1]["Rating"]), reverse=True)
@@ -275,6 +276,9 @@ class MovieApp:
             print(f"An error occurred in sort_rating: {e}")
 
     def _sort_year(self):
+        """
+                Sort and display the movies based on their year of release in descending order.
+                """
         movies = self.storage.storage_get_movies()
         try:
             sorted_movies = sorted(movies.items(), key=lambda item: float(item[1]["Year of release"]), reverse=True)
@@ -292,6 +296,9 @@ class MovieApp:
             print(f"An error occurred in sort_year: {e}")
 
     def _filter_movie(self):
+        """
+                Filter the movies based on a given rating, start year, and end year entered by the user.
+                """
         movies = self.storage.storage_get_movies()
         while True:
             try:
@@ -348,6 +355,12 @@ class MovieApp:
                 print(f"An error occurred in filter_movie: {e}")
 
     def _count_movies_by_year(self):
+        """
+                Count the number of movies released in a specified year.
+
+                Returns:
+                    num: The total number of movies released in the given year.
+                """
 
         movies = self.storage.storage_get_movies()
 
@@ -362,16 +375,76 @@ class MovieApp:
 
         return num
 
+    def _add_movie_from_api(self):
+        """
+        Internal method to add a movie to the storage by fetching data from the OMDb API.
+        """
+        while True:
+            try:
+                # Get movie name from user input
+                movie_name = get_valid_full_name()
+
+                # Construct the API request URL using environment variables
+                url = f"{self.base_url}?apikey={self.api_key}&t={movie_name}"
+                response = requests.get(url, timeout=10)
+
+                # Parse response
+                if response.status_code == 200:
+                    parsed = response.json()
+
+                    if not parsed or parsed.get("Response") == "False":
+                        answer = input("Movie not found. Press any key to try again, or 'q' to quit: ")
+                        if answer.lower().strip() == "q":
+                            break
+                        continue
+
+                    # Extract the relevant information from the API response
+                    title = parsed.get("Title", "Unknown Title")
+                    year = parsed.get("Year", "Unknown year")
+                    rating = parsed.get("imdbRating", "Unknown rating")
+                    poster = parsed.get("Poster", "Unknown poster")
+
+                    # Call the storage method to add or update the movie
+                    self.storage.storage_add_or_update_movie(title, year, rating, poster)
+                    print(f"Movie '{movie_name}' added or updated successfully.")
+                    answer = input("Press any key to add another movie, 'q' for quit: ").strip().lower()
+                    if answer == "q":
+                        break
+
+                else:
+                    print(f"Error fetching movie data: {response.status_code}. Please try again.")
+
+            except requests.ConnectionError:
+                print("Network error: Unable to reach the API. Please check your internet connection.")
+                retry = input("Press any key to retry, or 'q' to quit: ").strip().lower()
+                if retry == "q":
+                    break
+
+            except requests.Timeout:
+                print("The request timed out. The server might be too slow or unresponsive.")
+                retry = input("Press any key to retry, or 'q' to quit: ").strip().lower()
+                if retry == "q":
+                    break
+
+            except Exception as e:
+                print(f"An unexpected error occurred in add_movie_from_api: {e}")
+
     @staticmethod
-    def _generate_website(self):
+    def _generate_website():
+        """
+                Generate a static website based on the stored movies.
+                """
         print("Generating website...")
         generate_html()  # Call the function that generates the website
 
     def run(self):
+        """
+                Run the main program loop to interact with the user, display the menu, and perform actions.
+                """
         menu = {
             '0': exit_panel,
             '1': self._display_list_movies,
-            '2': self._add_movie,
+            '2': self._add_movie_from_api,
             '3': self._delete_movie,
             '4': self._update_movie,
             '5': self._show_status,

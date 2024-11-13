@@ -4,8 +4,9 @@
         "Rating": "8.1"
     },
     "Titanic": {
-        "Year of release": "1993",
-        "Rating": "8.1"
+        "Year of release": "1997",
+        "Rating": "7.9",
+        "Poster": "https://m.media-amazon.com/images/M/MV5BYzYyN2FiZmUtYWYzMy00MzViLWJkZTMtOGY1ZjgzNWMwN2YxXkEyXkFqcGc@._V1_SX300.jpg"
     },
     "The Shawshank Redemption": {
         "Year of release": "1994",
@@ -44,8 +45,14 @@
         "Rating": 5.0,
         "Poster": "No poster available"
     },
-    "Tian": {
+    "The Wild Robot": {
         "Year of release": "2024",
-        "Rating": 5.0
+        "Rating": "8.5",
+        "Poster": "https://m.media-amazon.com/images/M/MV5BZjM2M2E3YzAtZDJjYy00MDhkLThiYmItOGZhNzQ3NTgyZmI0XkEyXkFqcGc@._V1_SX300.jpg"
+    },
+    "Mission: Impossible": {
+        "Year of release": "1996",
+        "Rating": "7.2",
+        "Poster": "https://m.media-amazon.com/images/M/MV5BOGZjNDlkMTYtMTJkZi00OTkzLWI4NDEtYTA2ODQyMjcwYTdlXkEyXkFqcGc@._V1_SX300.jpg"
     }
 }

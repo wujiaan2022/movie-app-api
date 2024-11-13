@@ -1,6 +1,7 @@
 import requests
 from dotenv import load_dotenv
 import os
+import json
 
 
 # Load environment variables from .env file
@@ -8,6 +9,15 @@ load_dotenv()
 
 # Access the API key
 api_key = os.getenv("API_KEY")
+
+
+def load_user_movies():
+    try:
+        with open("data.json", "r") as file:
+            return json.load(file)  # Return the dictionary as-is
+    except FileNotFoundError:
+        print("User movies file not found.")
+        return {}
 
 
 def get_simple_infos_from_api(name):
@@ -57,18 +67,21 @@ def get_simple_infos_from_api(name):
 
 def generate_movie_grid(movies):
     movie_items = ""
-    for movie in movies:
+    for title, details in movies.items():
+        poster = details.get("Poster")
 
-        for title, details in movie.items():
-            poster = details.get("poster", "https://via.placeholder.com/300x450?text=No+Poster+Available")
-            year = details.get("year", "Unknown Year")
+        # Only include movies that have a poster
+        if poster and poster != "No poster available":
+            year = details.get("Year of release", "Unknown Year")
+            rating = details.get("Rating", "Unknown Rating")
 
             movie_items += f"""
             <li>
                 <div class="movie">
                     <img class="movie-poster" src="{poster}"/>
                     <div class="movie-title">{title}</div>
-                    <div class="movie-year">{year}</div>
+                    <div class="movie-year">Year: {year}</div>
+                    <div class="movie-rating">Rating: {rating}</div>
                 </div>
             </li>
             """
@@ -90,13 +103,8 @@ def generate_html():
         print(f"Template file not found at: {template_path}")
         return
 
-    # Get movie data for two movies
-    movies = []
-    movie_titles = ["The Dark Knight", "Pulp Fiction"]
-    for title in movie_titles:
-        movie_info = get_simple_infos_from_api(title)
-        if movie_info:
-            movies.append(movie_info)
+    # Load movie data from data.json
+    movies = load_user_movies()
 
     # Generate movie grid HTML
     movie_grid_html = generate_movie_grid(movies)
@@ -109,7 +117,6 @@ def generate_html():
         output_file.write(final_html)
 
     print("Website generated successfully!")
-
 
 # print(get_simple_infos_from_api("The Dark Knight"))
 
